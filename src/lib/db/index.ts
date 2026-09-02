@@ -56,6 +56,13 @@ export function getDB(): Database.Database {
       } catch (e) {
         console.warn('Auto-migration warning for meta_ads_metrics:', e);
       }
+
+      try {
+        // Ensure landing_pages table created
+        db.exec(DB_SCHEMA);
+      } catch (e) {
+        console.warn('Auto-migration warning for landing_pages:', e);
+      }
       
       // Seed default account if none exists
       const accountCount = db.prepare('SELECT COUNT(*) as count FROM accounts').get() as { count: number };

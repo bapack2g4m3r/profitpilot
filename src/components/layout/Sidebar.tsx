@@ -42,6 +42,8 @@ const navItems: NavItem[] = [
   // Input Data
   { label: 'Import CSV Shopee', href: '/import', icon: <Upload size={18} />, section: 'INPUT DATA' },
   { label: 'Input Manual', href: '/input', icon: <PenLine size={18} />, section: 'INPUT DATA' },
+  // Landing Page Builder
+  { label: 'Landing Page Builder', href: '/landing', icon: <Compass size={18} />, badge: 'NEW', section: 'LANDING PAGE' },
   // Advanced & Intelligence
   { label: 'Atribusi Presisi', href: '/attribution', icon: <Crosshair size={18} />, section: 'AUTOMATION & AI' },
   { label: 'Robot Automasi', href: '/automation', icon: <Bot size={18} />, badge: 'BETA', section: 'AUTOMATION & AI' },

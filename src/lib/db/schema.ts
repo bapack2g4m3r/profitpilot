@@ -64,7 +64,7 @@ export interface MetaAdsMetric {
   campaign_id: number;
   metric_date: string;
   spend: number;
-  spend_with_tax: number; // Includes PPN 11%
+  spend_with_tax: number;
   impressions: number;
   clicks: number;
   ctr: number;
@@ -86,7 +86,7 @@ export interface DailySummary {
   ads_commission: number;
   organic_commission: number;
   total_ad_spend: number;
-  total_ad_spend_with_tax: number; // Includes PPN 11%
+  total_ad_spend_with_tax: number;
   net_profit: number;
   roas: number;
   total_orders: number;
@@ -168,6 +168,43 @@ export interface TelegramConfig {
   notify_on_daily_summary: boolean;
   roas_threshold: number;
   spend_threshold: number;
+  created_at: string;
+}
+
+export interface LandingPage {
+  id: number;
+  name: string;
+  slug: string;
+  landing_type: 'CUSTOM' | 'BLINK';
+  template: 'PRODUCT' | 'DEAL' | 'REVIEW' | 'REDIRECT';
+  product_name: string;
+  shop_name: string;
+  original_price: number;
+  promo_price: number;
+  discount_percent: number;
+  rating: number;
+  sold_count: string;
+  image_url: string;
+  description: string;
+  highlights: string; // JSON string or comma-separated
+  cta_text: string;
+  affiliate_url: string;
+  campaign_id: string;
+  utm_source: string;
+  utm_medium: string;
+  utm_campaign: string;
+  utm_content: string;
+  meta_pixel_id: string;
+  redirect_delay: number; // 0, 0.5, 1, 2, 3 seconds
+  visitors: number;
+  cta_clicks: number;
+  redirects: number;
+  outbound_clicks: number;
+  orders: number;
+  commission: number;
+  ad_spend: number;
+  profit: number;
+  status: 'active' | 'paused';
   created_at: string;
 }
 
@@ -346,10 +383,49 @@ export const DB_SCHEMA = `
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
 
+  CREATE TABLE IF NOT EXISTS landing_pages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    landing_type TEXT NOT NULL DEFAULT 'CUSTOM', -- 'CUSTOM' | 'BLINK'
+    template TEXT NOT NULL DEFAULT 'PRODUCT',   -- 'PRODUCT' | 'DEAL' | 'REVIEW' | 'REDIRECT'
+    product_name TEXT NOT NULL,
+    shop_name TEXT NOT NULL DEFAULT 'Toko Marketplace',
+    original_price REAL NOT NULL DEFAULT 0,
+    promo_price REAL NOT NULL DEFAULT 0,
+    discount_percent INTEGER NOT NULL DEFAULT 0,
+    rating REAL NOT NULL DEFAULT 4.9,
+    sold_count TEXT NOT NULL DEFAULT '2.5rb+',
+    image_url TEXT,
+    description TEXT,
+    highlights TEXT,
+    cta_text TEXT NOT NULL DEFAULT 'CEK PROMO',
+    affiliate_url TEXT NOT NULL,
+    campaign_id TEXT,
+    utm_source TEXT DEFAULT 'facebook',
+    utm_medium TEXT DEFAULT 'cpc',
+    utm_campaign TEXT,
+    utm_content TEXT,
+    meta_pixel_id TEXT,
+    redirect_delay REAL NOT NULL DEFAULT 1.0, -- seconds
+    visitors INTEGER NOT NULL DEFAULT 0,
+    cta_clicks INTEGER NOT NULL DEFAULT 0,
+    redirects INTEGER NOT NULL DEFAULT 0,
+    outbound_clicks INTEGER NOT NULL DEFAULT 0,
+    orders INTEGER NOT NULL DEFAULT 0,
+    commission REAL NOT NULL DEFAULT 0,
+    ad_spend REAL NOT NULL DEFAULT 0,
+    profit REAL NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'active',
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
   CREATE INDEX IF NOT EXISTS idx_orders_date ON shopee_orders(order_date);
   CREATE INDEX IF NOT EXISTS idx_orders_status ON shopee_orders(status);
   CREATE INDEX IF NOT EXISTS idx_orders_account ON shopee_orders(account_id);
   CREATE INDEX IF NOT EXISTS idx_metrics_date ON meta_ads_metrics(metric_date);
   CREATE INDEX IF NOT EXISTS idx_summary_date ON daily_summary(summary_date);
   CREATE INDEX IF NOT EXISTS idx_products_tag ON products(tag);
+  CREATE INDEX IF NOT EXISTS idx_landing_slug ON landing_pages(slug);
+  CREATE INDEX IF NOT EXISTS idx_landing_type ON landing_pages(landing_type);
 `;
