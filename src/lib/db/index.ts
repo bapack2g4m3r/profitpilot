@@ -33,6 +33,29 @@ export function getDB(): Database.Database {
       
       // Initialize schema
       db.exec(DB_SCHEMA);
+
+      // Auto-migrate columns if missing
+      try {
+        const tableInfo = db.prepare('PRAGMA table_info(daily_summary)').all() as Array<{ name: string }>;
+        const hasTaxCol = tableInfo.some(col => col.name === 'total_ad_spend_with_tax');
+        if (!hasTaxCol) {
+          db.exec('ALTER TABLE daily_summary ADD COLUMN total_ad_spend_with_tax REAL NOT NULL DEFAULT 0;');
+          db.exec('UPDATE daily_summary SET total_ad_spend_with_tax = ROUND(total_ad_spend * 1.11);');
+        }
+      } catch (e) {
+        console.warn('Auto-migration warning for daily_summary:', e);
+      }
+
+      try {
+        const tableInfo = db.prepare('PRAGMA table_info(meta_ads_metrics)').all() as Array<{ name: string }>;
+        const hasTaxCol = tableInfo.some(col => col.name === 'spend_with_tax');
+        if (!hasTaxCol) {
+          db.exec('ALTER TABLE meta_ads_metrics ADD COLUMN spend_with_tax REAL NOT NULL DEFAULT 0;');
+          db.exec('UPDATE meta_ads_metrics SET spend_with_tax = ROUND(spend * 1.11);');
+        }
+      } catch (e) {
+        console.warn('Auto-migration warning for meta_ads_metrics:', e);
+      }
       
       // Seed default account if none exists
       const accountCount = db.prepare('SELECT COUNT(*) as count FROM accounts').get() as { count: number };

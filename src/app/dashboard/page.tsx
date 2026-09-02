@@ -155,10 +155,10 @@ export default function DashboardPage() {
 
           {/* Order Status */}
           <OrderStatus
-            completed={data.kpi.completed_orders}
-            pending={data.kpi.pending_orders}
-            cancelled={data.kpi.cancelled_orders}
-            total={data.kpi.total_orders}
+            completed={data.kpi?.completed_orders ?? 0}
+            pending={data.kpi?.pending_orders ?? 0}
+            cancelled={data.kpi?.cancelled_orders ?? 0}
+            total={data.kpi?.total_orders ?? 0}
           />
 
           {/* Recent Orders */}
