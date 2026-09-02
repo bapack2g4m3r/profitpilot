@@ -22,6 +22,7 @@ import {
   Radio,
   Sparkles
 } from 'lucide-react';
+import ProfitPilotLogo from '../brand/Logo';
 
 interface NavItem {
   label: string;
@@ -71,21 +72,8 @@ export default function Sidebar() {
       }}
     >
       {/* Brand & App Icon */}
-      <div className="flex items-center gap-3 px-4 py-4 border-b border-white/5">
-        <div className="w-9 h-9 rounded-2xl flex items-center justify-center bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 shadow-lg shadow-blue-500/20 shrink-0">
-          <Compass size={20} className="text-white" />
-        </div>
-        {!collapsed && (
-          <div className="animate-fade-in">
-            <h1 className="text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
-              ProfitPilot
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            </h1>
-            <p className="text-[10px] text-slate-400 font-medium">
-              Shopee Affiliate × Meta
-            </p>
-          </div>
-        )}
+      <div className="flex items-center justify-between px-4 py-4 border-b border-white/5">
+        <ProfitPilotLogo size={36} showText={!collapsed} />
       </div>
 
       {/* Robot Live Indicator Pill */}

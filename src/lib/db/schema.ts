@@ -10,6 +10,16 @@ export interface Account {
   created_at: string;
 }
 
+export interface MetaAdAccount {
+  id: number;
+  account_id: string;
+  name: string;
+  currency: string;
+  is_active: boolean;
+  include_tax_11: boolean;
+  created_at: string;
+}
+
 export interface ShopeeOrder {
   id: number;
   account_id: number;
@@ -33,6 +43,7 @@ export interface ShopeeOrder {
 
 export interface MetaCampaign {
   id: number;
+  meta_account_id: number;
   campaign_id: string;
   campaign_name: string;
   ad_set_id: string;
@@ -53,6 +64,7 @@ export interface MetaAdsMetric {
   campaign_id: number;
   metric_date: string;
   spend: number;
+  spend_with_tax: number; // Includes PPN 11%
   impressions: number;
   clicks: number;
   ctr: number;
@@ -62,6 +74,7 @@ export interface MetaAdsMetric {
   cost_per_conversion: number;
   reach: number;
   frequency: number;
+  health_status: 'healthy' | 'high_cpm' | 'fatigue' | 'low_ctr';
   created_at: string;
 }
 
@@ -73,6 +86,7 @@ export interface DailySummary {
   ads_commission: number;
   organic_commission: number;
   total_ad_spend: number;
+  total_ad_spend_with_tax: number; // Includes PPN 11%
   net_profit: number;
   roas: number;
   total_orders: number;
@@ -137,6 +151,7 @@ export interface MetaAPIConfig {
   app_secret: string;
   access_token: string;
   ad_account_id: string;
+  include_tax_11: boolean;
   token_expires_at: string;
   is_connected: boolean;
   last_sync: string;
@@ -167,6 +182,16 @@ export const DB_SCHEMA = `
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
 
+  CREATE TABLE IF NOT EXISTS meta_ad_accounts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    account_id TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    currency TEXT NOT NULL DEFAULT 'IDR',
+    is_active INTEGER NOT NULL DEFAULT 1,
+    include_tax_11 INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
   CREATE TABLE IF NOT EXISTS shopee_orders (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     account_id INTEGER NOT NULL DEFAULT 1,
@@ -190,6 +215,7 @@ export const DB_SCHEMA = `
 
   CREATE TABLE IF NOT EXISTS meta_campaigns (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    meta_account_id INTEGER NOT NULL DEFAULT 1,
     campaign_id TEXT UNIQUE NOT NULL,
     campaign_name TEXT NOT NULL,
     ad_set_id TEXT,
@@ -210,6 +236,7 @@ export const DB_SCHEMA = `
     campaign_id INTEGER NOT NULL,
     metric_date TEXT NOT NULL,
     spend REAL NOT NULL DEFAULT 0,
+    spend_with_tax REAL NOT NULL DEFAULT 0,
     impressions INTEGER NOT NULL DEFAULT 0,
     clicks INTEGER NOT NULL DEFAULT 0,
     ctr REAL NOT NULL DEFAULT 0,
@@ -219,6 +246,7 @@ export const DB_SCHEMA = `
     cost_per_conversion REAL NOT NULL DEFAULT 0,
     reach INTEGER NOT NULL DEFAULT 0,
     frequency REAL NOT NULL DEFAULT 0,
+    health_status TEXT NOT NULL DEFAULT 'healthy',
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     FOREIGN KEY (campaign_id) REFERENCES meta_campaigns(id),
     UNIQUE(campaign_id, metric_date)
@@ -232,6 +260,7 @@ export const DB_SCHEMA = `
     ads_commission REAL NOT NULL DEFAULT 0,
     organic_commission REAL NOT NULL DEFAULT 0,
     total_ad_spend REAL NOT NULL DEFAULT 0,
+    total_ad_spend_with_tax REAL NOT NULL DEFAULT 0,
     net_profit REAL NOT NULL DEFAULT 0,
     roas REAL NOT NULL DEFAULT 0,
     total_orders INTEGER NOT NULL DEFAULT 0,
@@ -297,6 +326,7 @@ export const DB_SCHEMA = `
     app_secret TEXT,
     access_token TEXT,
     ad_account_id TEXT,
+    include_tax_11 INTEGER NOT NULL DEFAULT 1,
     token_expires_at TEXT,
     is_connected INTEGER NOT NULL DEFAULT 0,
     last_sync TEXT,

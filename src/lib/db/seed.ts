@@ -87,8 +87,9 @@ export function seedDemoData() {
     const isWeekend = date.getDay() === 0 || date.getDay() === 6;
     const baseSpend = isWeekend ? 80000 : 150000;
     const adSpend = Math.round(baseSpend + Math.random() * 100000);
-    const netProfit = dayCommission - adSpend;
-    const roas = adSpend > 0 ? Math.round((dayCommission / adSpend) * 100) / 100 : 0;
+    const adSpendWithTax = Math.round(adSpend * 1.11); // Includes 11% PPN Tax Meta Ads Indonesia
+    const netProfit = dayCommission - adSpendWithTax;
+    const roas = adSpendWithTax > 0 ? Math.round((dayCommission / adSpendWithTax) * 100) / 100 : 0;
 
     dailySummaries.push({
       summary_date: dateStr,
@@ -96,6 +97,7 @@ export function seedDemoData() {
       ads_commission: dayAdsCommission,
       organic_commission: dayOrganicCommission,
       total_ad_spend: adSpend,
+      total_ad_spend_with_tax: adSpendWithTax,
       net_profit: netProfit,
       roas,
       total_orders: numOrders,
@@ -133,8 +135,8 @@ export function seedDemoData() {
   `);
 
   const insertSummary = db.prepare(`
-    INSERT INTO daily_summary (summary_date, total_commission, ads_commission, organic_commission, total_ad_spend, net_profit, roas, total_orders, completed_orders, pending_orders, cancelled_orders)
-    VALUES (@summary_date, @total_commission, @ads_commission, @organic_commission, @total_ad_spend, @net_profit, @roas, @total_orders, @completed_orders, @pending_orders, @cancelled_orders)
+    INSERT INTO daily_summary (summary_date, total_commission, ads_commission, organic_commission, total_ad_spend, total_ad_spend_with_tax, net_profit, roas, total_orders, completed_orders, pending_orders, cancelled_orders)
+    VALUES (@summary_date, @total_commission, @ads_commission, @organic_commission, @total_ad_spend, @total_ad_spend_with_tax, @net_profit, @roas, @total_orders, @completed_orders, @pending_orders, @cancelled_orders)
   `);
 
   const insertCampaign = db.prepare(`

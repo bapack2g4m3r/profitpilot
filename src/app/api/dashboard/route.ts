@@ -9,7 +9,8 @@ export async function GET(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams;
     const period = searchParams.get('period') || 'thisMonth';
-    const accountId = searchParams.get('account_id') || '1';
+    const includeTax = searchParams.get('include_tax') !== 'false'; // default true
+    const metaAccountId = searchParams.get('meta_account_id') || 'all';
 
     // Calculate date range
     const now = new Date();
@@ -46,15 +47,18 @@ export async function GET(request: NextRequest) {
         startDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
     }
 
+    // Spend field selection based on PPN 11% setting
+    const spendCol = includeTax ? 'total_ad_spend_with_tax' : 'total_ad_spend';
+
     // KPI Summary
     const kpiQuery = db.prepare(`
       SELECT 
         COALESCE(SUM(total_commission), 0) as total_commission,
         COALESCE(SUM(ads_commission), 0) as ads_commission,
         COALESCE(SUM(organic_commission), 0) as organic_commission,
-        COALESCE(SUM(total_ad_spend), 0) as total_ad_spend,
-        COALESCE(SUM(net_profit), 0) as net_profit,
-        CASE WHEN SUM(total_ad_spend) > 0 THEN ROUND(SUM(total_commission) * 1.0 / SUM(total_ad_spend), 2) ELSE 0 END as roas,
+        COALESCE(SUM(${spendCol}), 0) as total_ad_spend,
+        COALESCE(SUM(total_commission - ${spendCol}), 0) as net_profit,
+        CASE WHEN SUM(${spendCol}) > 0 THEN ROUND(SUM(total_commission) * 1.0 / SUM(${spendCol}), 2) ELSE 0 END as roas,
         COALESCE(SUM(total_orders), 0) as total_orders,
         COALESCE(SUM(completed_orders), 0) as completed_orders,
         COALESCE(SUM(pending_orders), 0) as pending_orders,
@@ -66,7 +70,8 @@ export async function GET(request: NextRequest) {
 
     // Daily chart data
     const dailyQuery = db.prepare(`
-      SELECT summary_date, total_commission, total_ad_spend, net_profit, roas, 
+      SELECT summary_date, total_commission, ${spendCol} as total_ad_spend, 
+             (total_commission - ${spendCol}) as net_profit, roas, 
              ads_commission, organic_commission, total_orders
       FROM daily_summary
       WHERE summary_date BETWEEN ? AND ?
@@ -88,20 +93,6 @@ export async function GET(request: NextRequest) {
     `);
     const topProducts = topProductsQuery.all(startDate, endDate);
 
-    // Top campaigns by ROAS
-    const topCampaignsQuery = db.prepare(`
-      SELECT c.campaign_name, c.status,
-             COALESCE(SUM(m.spend), 0) as total_spend,
-             COALESCE(SUM(m.clicks), 0) as total_clicks,
-             COALESCE(SUM(m.conversions), 0) as total_conversions,
-             COALESCE(SUM(m.impressions), 0) as total_impressions
-      FROM meta_campaigns c
-      LEFT JOIN meta_ads_metrics m ON c.id = m.campaign_id AND m.metric_date BETWEEN ? AND ?
-      GROUP BY c.id
-      ORDER BY total_spend DESC
-    `);
-    const topCampaigns = topCampaignsQuery.all(startDate, endDate);
-
     // Recent orders
     const recentOrdersQuery = db.prepare(`
       SELECT order_id, product_name, shop_name, commission_amount, status, source, order_date
@@ -112,17 +103,14 @@ export async function GET(request: NextRequest) {
     `);
     const recentOrders = recentOrdersQuery.all(startDate, endDate);
 
-    // Accounts list
-    const accounts = db.prepare('SELECT * FROM accounts WHERE is_active = 1').all();
-
     return NextResponse.json({
       kpi,
       dailyData,
       topProducts,
-      topCampaigns,
       recentOrders,
-      accounts,
       period,
+      includeTax,
+      metaAccountId,
       dateRange: { start: startDate, end: endDate },
     });
   } catch (error) {

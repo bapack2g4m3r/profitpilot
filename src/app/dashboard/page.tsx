@@ -7,7 +7,7 @@ import DailyChart from '@/components/dashboard/DailyChart';
 import TopPerformers from '@/components/dashboard/TopPerformers';
 import OrderStatus from '@/components/dashboard/OrderStatus';
 import RecentOrders from '@/components/dashboard/RecentOrders';
-import { Calendar, RefreshCw, SlidersHorizontal } from 'lucide-react';
+import { Calendar, RefreshCw } from 'lucide-react';
 
 interface DashboardData {
   kpi: {
@@ -57,6 +57,8 @@ const periods = [
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [period, setPeriod] = useState('thisMonth');
+  const [selectedAccount, setSelectedAccount] = useState('all');
+  const [includeTax11, setIncludeTax11] = useState(true);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -65,7 +67,9 @@ export default function DashboardPage() {
     else setLoading(true);
 
     try {
-      const res = await fetch(`/api/dashboard?period=${period}`);
+      const res = await fetch(
+        `/api/dashboard?period=${period}&include_tax=${includeTax11}&meta_account_id=${selectedAccount}`
+      );
       const json = await res.json();
       setData(json);
     } catch (err) {
@@ -74,7 +78,7 @@ export default function DashboardPage() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [period]);
+  }, [period, includeTax11, selectedAccount]);
 
   useEffect(() => {
     fetchData();
@@ -82,7 +86,13 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-6">
-      <Header onRefresh={() => fetchData(true)} />
+      <Header
+        onRefresh={() => fetchData(true)}
+        selectedAccount={selectedAccount}
+        onAccountChange={(acc) => setSelectedAccount(acc)}
+        includeTax11={includeTax11}
+        onTaxChange={(tax) => setIncludeTax11(tax)}
+      />
 
       {/* Control Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white/[0.02] p-3 rounded-2xl border border-white/5 backdrop-blur-md">

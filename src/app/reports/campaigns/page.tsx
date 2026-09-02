@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { formatIDR, formatNumber, formatPercent } from '@/lib/utils';
+import { formatIDR, formatNumber } from '@/lib/utils';
 import {
-  Megaphone, RefreshCw, Download, Play, Pause, Target, Eye, MousePointer, ShoppingCart, DollarSign
+  Megaphone, RefreshCw, Download, Play, Pause, Target, Eye, MousePointer, ShoppingCart, AlertTriangle, ShieldCheck, Zap, Activity
 } from 'lucide-react';
 
 interface Campaign {
@@ -25,6 +25,7 @@ interface Campaign {
   cpm: number;
   cost_per_conversion: number;
   active_days: number;
+  health_status?: string;
 }
 
 interface CampaignReportData {
@@ -50,6 +51,7 @@ export default function CampaignReportPage() {
   const [data, setData] = useState<CampaignReportData | null>(null);
   const [period, setPeriod] = useState('thisMonth');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [includeTax, setIncludeTax] = useState(true);
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
@@ -70,7 +72,6 @@ export default function CampaignReportPage() {
   }, [fetchData]);
 
   const toggleCampaignStatus = async (id: number, currentStatus: string) => {
-    // Optimistic status update simulation
     if (!data) return;
     const newStatus = currentStatus === 'active' ? 'paused' : 'active';
     setData({
@@ -79,41 +80,46 @@ export default function CampaignReportPage() {
     });
   };
 
-  const exportCSV = () => {
-    if (!data?.campaigns.length) return;
-    const headers = ['Campaign ID', 'Nama Kampanye', 'Objective', 'Status', 'Daily Budget', 'Total Spend', 'Impressions', 'Clicks', 'CTR (%)', 'CPC', 'CPM', 'Conversions', 'Cost/Conversion'];
-    const rows = data.campaigns.map(c => [
-      c.campaign_id, `"${c.campaign_name}"`, c.objective, c.status, c.daily_budget,
-      c.total_spend, c.total_impressions, c.total_clicks, c.ctr, c.cpc, c.cpm,
-      c.total_conversions, c.cost_per_conversion
-    ]);
-    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `laporan_kampanye_${period}_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const getHealthBadge = (ctr: number, cpm: number, spend: number) => {
+    if (cpm > 35000) {
+      return <span className="apple-badge apple-badge-red text-[10px]"><AlertTriangle size={10} /> CPM Tinggi</span>;
+    }
+    if (ctr < 1.2) {
+      return <span className="apple-badge apple-badge-amber text-[10px]"><Activity size={10} /> Low CTR</span>;
+    }
+    if (spend > 300000 && ctr >= 2.0) {
+      return <span className="apple-badge apple-badge-green text-[10px]"><Zap size={10} /> Scale Ready</span>;
+    }
+    return <span className="apple-badge apple-badge-blue text-[10px]"><ShieldCheck size={10} /> Sehat</span>;
   };
 
+  const totalSpendRaw = data?.totals?.total_spend || 0;
+  const totalSpendCalc = includeTax ? Math.round(totalSpendRaw * 1.11) : totalSpendRaw;
   const totalCTR = data?.totals?.total_impressions ? (data.totals.total_clicks / data.totals.total_impressions) * 100 : 0;
-  const totalCPC = data?.totals?.total_clicks ? data.totals.total_spend / data.totals.total_clicks : 0;
 
   return (
-    <div className="max-w-[1400px] mx-auto">
+    <div className="max-w-[1400px] mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <Megaphone size={20} className="text-purple-400" />
-            <h1 className="text-2xl font-bold">Laporan Kampanye Meta Ads</h1>
+            <h1 className="text-2xl font-bold text-white">Analisis Iklan &amp; Kampanye Meta</h1>
+            <span className="apple-badge apple-badge-purple text-[10px]">DIAGNOSA KESEHATAN IKLAN</span>
           </div>
-          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-            Pantau performa iklan Meta Graph API, budget, CTR, CPC, dan konversi.
+          <p className="text-sm text-slate-400">
+            Performa iklan Meta Graph API, diagnosa CPM/CTR, konversi, dan perhitungan PPN 11% Indonesia.
           </p>
         </div>
+
         <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => setIncludeTax(!includeTax)}
+            className={`apple-badge cursor-pointer text-xs ${includeTax ? 'apple-badge-green' : 'apple-badge-amber'}`}
+          >
+            PPN 11% Meta: {includeTax ? 'Dihitung (+11%)' : 'Tanpa Tax'}
+          </button>
+
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="select-field w-auto" style={{ minWidth: '120px' }}>
             <option value="all">Semua Status</option>
             <option value="active">Active</option>
@@ -122,8 +128,7 @@ export default function CampaignReportPage() {
           <select value={period} onChange={(e) => setPeriod(e.target.value)} className="select-field w-auto" style={{ minWidth: '130px' }}>
             {periods.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
           </select>
-          <button onClick={exportCSV} className="btn-secondary text-xs"><Download size={14} /> Export CSV</button>
-          <button onClick={fetchData} className="btn-primary text-xs"><RefreshCw size={14} /> Refresh</button>
+          <button onClick={fetchData} className="apple-btn-primary text-xs"><RefreshCw size={14} /> Refresh</button>
         </div>
       </div>
 
@@ -137,44 +142,45 @@ export default function CampaignReportPage() {
       ) : data ? (
         <div className="space-y-5">
           {/* Summary Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="card animate-fade-in">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            <div className="apple-card">
               <div className="flex items-center gap-2 mb-1">
-                <Target size={14} className="text-red-400" />
-                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>Total Ad Spend</span>
+                <Target size={14} className="text-rose-400" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Ad Spend {includeTax ? '(inc. PPN 11%)' : ''}</span>
               </div>
-              <p className="text-xl font-bold font-mono text-red-400">{formatIDR(data.totals.total_spend)}</p>
+              <p className="text-xl font-bold font-mono text-rose-400">{formatIDR(totalSpendCalc)}</p>
+              {includeTax && <p className="text-[10px] text-slate-500 font-mono mt-0.5">Ad Spend Net: {formatIDR(totalSpendRaw)}</p>}
             </div>
-            <div className="card animate-fade-in stagger-1">
+            <div className="apple-card">
               <div className="flex items-center gap-2 mb-1">
                 <Eye size={14} className="text-blue-400" />
-                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>Impressions & Reach</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Impressions &amp; Reach</span>
               </div>
               <p className="text-xl font-bold font-mono text-blue-400">{formatNumber(data.totals.total_impressions)}</p>
               <p className="text-xs text-slate-400 font-mono mt-0.5">Reach: {formatNumber(data.totals.total_reach)}</p>
             </div>
-            <div className="card animate-fade-in stagger-2">
+            <div className="apple-card">
               <div className="flex items-center gap-2 mb-1">
-                <MousePointer size={14} className="text-yellow-400" />
-                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>Clicks & Rata-Rata CTR</span>
+                <MousePointer size={14} className="text-amber-400" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Clicks &amp; Rata-Rata CTR</span>
               </div>
-              <p className="text-xl font-bold font-mono text-yellow-400">{formatNumber(data.totals.total_clicks)} Clicks</p>
-              <p className="text-xs text-emerald-400 font-mono mt-0.5">CTR: {totalCTR.toFixed(2)}% | CPC: {formatIDR(totalCPC)}</p>
+              <p className="text-xl font-bold font-mono text-amber-400">{formatNumber(data.totals.total_clicks)} Clicks</p>
+              <p className="text-xs text-emerald-400 font-mono mt-0.5">CTR: {totalCTR.toFixed(2)}%</p>
             </div>
-            <div className="card animate-fade-in stagger-3">
+            <div className="apple-card">
               <div className="flex items-center gap-2 mb-1">
                 <ShoppingCart size={14} className="text-purple-400" />
-                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>Total Conversions</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Conversions</span>
               </div>
               <p className="text-xl font-bold font-mono text-purple-400">{formatNumber(data.totals.total_conversions)} Result</p>
             </div>
           </div>
 
           {/* Campaign Table */}
-          <div className="card p-0 overflow-hidden">
-            <div className="px-5 py-4 border-b flex items-center justify-between" style={{ borderColor: 'var(--color-border)' }}>
-              <h3 className="text-sm font-bold uppercase tracking-wider">
-                📢 Daftar Kampanye Meta ({data.campaigns.length})
+          <div className="apple-card p-0 overflow-hidden">
+            <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
+              <h3 className="text-sm font-bold tracking-tight text-white">
+                📢 Performa Kampanye Meta Ads ({data.campaigns.length})
               </h3>
             </div>
             <div className="table-container" style={{ border: 'none', borderRadius: 0 }}>
@@ -183,9 +189,9 @@ export default function CampaignReportPage() {
                   <tr>
                     <th>Status</th>
                     <th>Nama Kampanye</th>
-                    <th>Objective</th>
+                    <th>Diagnosa</th>
                     <th>Daily Budget</th>
-                    <th>Total Spend</th>
+                    <th>Total Spend {includeTax ? '(+11%)' : ''}</th>
                     <th>Impressions</th>
                     <th>Clicks</th>
                     <th>CTR</th>
@@ -197,41 +203,44 @@ export default function CampaignReportPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.campaigns.map((c) => (
-                    <tr key={c.id}>
-                      <td>
-                        <span className={`badge text-[10px] ${c.status === 'active' ? 'badge-success' : 'badge-warning'}`}>
-                          {c.status === 'active' ? '● Active' : '⏸ Paused'}
-                        </span>
-                      </td>
-                      <td>
-                        <div>
-                          <p className="font-semibold text-sm text-white">{c.campaign_name}</p>
-                          <p className="text-[11px] text-slate-400">ID: {c.campaign_id}</p>
-                        </div>
-                      </td>
-                      <td><span className="badge badge-info text-[10px]">{c.objective}</span></td>
-                      <td><span className="font-mono text-sm">{formatIDR(c.daily_budget)}</span></td>
-                      <td><span className="font-mono font-semibold text-red-400">{formatIDR(c.total_spend)}</span></td>
-                      <td><span className="font-mono">{formatNumber(c.total_impressions)}</span></td>
-                      <td><span className="font-mono">{formatNumber(c.total_clicks)}</span></td>
-                      <td><span className="font-mono text-emerald-400">{c.ctr.toFixed(2)}%</span></td>
-                      <td><span className="font-mono">{formatIDR(c.cpc)}</span></td>
-                      <td><span className="font-mono">{formatIDR(c.cpm)}</span></td>
-                      <td><span className="font-mono text-purple-400 font-bold">{c.total_conversions}</span></td>
-                      <td><span className="font-mono">{formatIDR(c.cost_per_conversion)}</span></td>
-                      <td>
-                        <button
-                          onClick={() => toggleCampaignStatus(c.id, c.status)}
-                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors ${
-                            c.status === 'active' ? 'btn-danger' : 'btn-primary'
-                          }`}
-                        >
-                          {c.status === 'active' ? <><Pause size={12} /> Pause</> : <><Play size={12} /> Start</>}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {data.campaigns.map((c) => {
+                    const spendCalc = includeTax ? Math.round(c.total_spend * 1.11) : c.total_spend;
+                    return (
+                      <tr key={c.id}>
+                        <td>
+                          <span className={`apple-badge text-[10px] ${c.status === 'active' ? 'apple-badge-green' : 'apple-badge-amber'}`}>
+                            {c.status === 'active' ? 'Active' : 'Paused'}
+                          </span>
+                        </td>
+                        <td>
+                          <div>
+                            <p className="font-semibold text-xs text-white">{c.campaign_name}</p>
+                            <p className="text-[10px] text-slate-400 font-mono">ID: {c.campaign_id}</p>
+                          </div>
+                        </td>
+                        <td>{getHealthBadge(c.ctr, c.cpm, c.total_spend)}</td>
+                        <td><span className="font-mono text-xs">{formatIDR(c.daily_budget)}</span></td>
+                        <td><span className="font-mono font-semibold text-rose-400 text-xs">{formatIDR(spendCalc)}</span></td>
+                        <td><span className="font-mono text-xs">{formatNumber(c.total_impressions)}</span></td>
+                        <td><span className="font-mono text-xs">{formatNumber(c.total_clicks)}</span></td>
+                        <td><span className="font-mono text-xs text-emerald-400 font-bold">{c.ctr.toFixed(2)}%</span></td>
+                        <td><span className="font-mono text-xs">{formatIDR(c.cpc)}</span></td>
+                        <td><span className="font-mono text-xs">{formatIDR(c.cpm)}</span></td>
+                        <td><span className="font-mono text-purple-400 font-bold text-xs">{c.total_conversions}</span></td>
+                        <td><span className="font-mono text-xs">{formatIDR(c.cost_per_conversion)}</span></td>
+                        <td>
+                          <button
+                            onClick={() => toggleCampaignStatus(c.id, c.status)}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors ${
+                              c.status === 'active' ? 'apple-btn-secondary' : 'apple-btn-primary'
+                            }`}
+                          >
+                            {c.status === 'active' ? <><Pause size={12} /> Pause</> : <><Play size={12} /> Start</>}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
