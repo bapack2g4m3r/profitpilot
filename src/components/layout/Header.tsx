@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { RefreshCw, Sparkles, ShieldCheck, Layers, Percent } from 'lucide-react';
+import { RefreshCw, Sparkles, Layers, Percent } from 'lucide-react';
 
 interface HeaderProps {
   onRefresh?: () => void;
