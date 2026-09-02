@@ -41,8 +41,8 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   );
 }
 
-export default function DailyChart({ data }: DailyChartProps) {
-  const chartData = data.map((d) => ({
+export default function DailyChart({ data = [] }: DailyChartProps) {
+  const chartData = (data || []).map((d) => ({
     ...d,
     date: formatDateShort(d.summary_date),
   }));

@@ -38,7 +38,7 @@ function AnimatedValue({ value, type }: { value: number; type: string }) {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      const current = startVal + (value - startVal) * eased;
+      const current = startVal + ((value || 0) - startVal) * eased;
 
       if (el) {
         if (type === 'currency') {
@@ -64,7 +64,7 @@ function AnimatedValue({ value, type }: { value: number; type: string }) {
 }
 
 function KPICard({ label, value, type, icon, accentColor, gradient, delay = 0 }: KPICardProps) {
-  const isPositive = value >= 0;
+  const isPositive = (value || 0) >= 0;
 
   return (
     <div
@@ -94,7 +94,7 @@ function KPICard({ label, value, type, icon, accentColor, gradient, delay = 0 }:
 
       <div className="flex items-baseline gap-2">
         <p className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-          <AnimatedValue value={value} type={type} />
+          <AnimatedValue value={value || 0} type={type} />
         </p>
         {type === 'currency' && (
           <span className="mb-1">
@@ -111,21 +111,30 @@ function KPICard({ label, value, type, icon, accentColor, gradient, delay = 0 }:
 }
 
 interface KPIGridProps {
-  kpi: {
-    net_profit: number;
-    total_commission: number;
-    ads_commission: number;
-    organic_commission: number;
-    total_ad_spend: number;
-    roas: number;
+  kpi?: {
+    net_profit?: number;
+    total_commission?: number;
+    ads_commission?: number;
+    organic_commission?: number;
+    total_ad_spend?: number;
+    roas?: number;
   };
 }
 
 export default function KPIGrid({ kpi }: KPIGridProps) {
+  const safeKpi = {
+    net_profit: kpi?.net_profit ?? 0,
+    total_commission: kpi?.total_commission ?? 0,
+    ads_commission: kpi?.ads_commission ?? 0,
+    organic_commission: kpi?.organic_commission ?? 0,
+    total_ad_spend: kpi?.total_ad_spend ?? 0,
+    roas: kpi?.roas ?? 0,
+  };
+
   const cards: KPICardProps[] = [
     {
       label: 'Net Profit Real',
-      value: kpi.net_profit,
+      value: safeKpi.net_profit,
       type: 'currency',
       icon: <DollarSign size={16} />,
       accentColor: '#30d158',
@@ -133,7 +142,7 @@ export default function KPIGrid({ kpi }: KPIGridProps) {
     },
     {
       label: 'Total Komisi',
-      value: kpi.total_commission,
+      value: safeKpi.total_commission,
       type: 'currency',
       icon: <Coins size={16} />,
       accentColor: '#ff9f0a',
@@ -141,7 +150,7 @@ export default function KPIGrid({ kpi }: KPIGridProps) {
     },
     {
       label: 'Komisi Meta Ads',
-      value: kpi.ads_commission,
+      value: safeKpi.ads_commission,
       type: 'currency',
       icon: <ShoppingCart size={16} />,
       accentColor: '#bf5af2',
@@ -149,7 +158,7 @@ export default function KPIGrid({ kpi }: KPIGridProps) {
     },
     {
       label: 'Komisi Organik',
-      value: kpi.organic_commission,
+      value: safeKpi.organic_commission,
       type: 'currency',
       icon: <BarChart3 size={16} />,
       accentColor: '#64d2ff',
@@ -157,7 +166,7 @@ export default function KPIGrid({ kpi }: KPIGridProps) {
     },
     {
       label: 'Biaya Iklan Meta',
-      value: kpi.total_ad_spend,
+      value: safeKpi.total_ad_spend,
       type: 'currency',
       icon: <Target size={16} />,
       accentColor: '#ff453a',
@@ -165,11 +174,11 @@ export default function KPIGrid({ kpi }: KPIGridProps) {
     },
     {
       label: 'ROAS Performa',
-      value: kpi.roas,
+      value: safeKpi.roas,
       type: 'roas',
       icon: <Percent size={16} />,
-      accentColor: kpi.roas >= 2 ? '#30d158' : kpi.roas >= 1 ? '#ff9f0a' : '#ff453a',
-      gradient: kpi.roas >= 2 ? 'rgba(48,209,88,0.15)' : kpi.roas >= 1 ? 'rgba(255,159,10,0.15)' : 'rgba(255,69,58,0.15)',
+      accentColor: safeKpi.roas >= 2 ? '#30d158' : safeKpi.roas >= 1 ? '#ff9f0a' : '#ff453a',
+      gradient: safeKpi.roas >= 2 ? 'rgba(48,209,88,0.15)' : safeKpi.roas >= 1 ? 'rgba(255,159,10,0.15)' : 'rgba(255,69,58,0.15)',
     },
   ];
 

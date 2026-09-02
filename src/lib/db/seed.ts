@@ -4,9 +4,9 @@ import { getDB } from './index';
 export function seedDemoData() {
   const db = getDB();
   
-  // Check if we already have data
-  const orderCount = db.prepare('SELECT COUNT(*) as count FROM shopee_orders').get() as { count: number };
-  if (orderCount.count > 0) return;
+  // Check if we already have daily summary data
+  const summaryCount = db.prepare('SELECT COUNT(*) as count FROM daily_summary').get() as { count: number };
+  if (summaryCount && summaryCount.count > 0) return;
 
   const now = new Date();
   const orders: any[] = [];
@@ -414,6 +414,7 @@ export function seedDemoData() {
           campaign_id: i + 1,
           metric_date: dateStr,
           spend: Math.round(spend),
+          spend_with_tax: Math.round(spend * 1.11),
           impressions,
           clicks,
           ctr: Math.round(ctr * 100) / 100,

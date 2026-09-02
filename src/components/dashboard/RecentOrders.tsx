@@ -15,7 +15,8 @@ interface RecentOrdersProps {
   }>;
 }
 
-export default function RecentOrders({ orders }: RecentOrdersProps) {
+export default function RecentOrders({ orders = [] }: RecentOrdersProps) {
+  const safeOrders = orders || [];
   return (
     <div className="apple-card animate-fade-in" style={{ animationDelay: '0.35s', opacity: 0 }}>
       <div className="flex items-center justify-between mb-4">
@@ -44,7 +45,7 @@ export default function RecentOrders({ orders }: RecentOrdersProps) {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order, i) => (
+            {safeOrders.map((order, i) => (
               <tr key={i}>
                 <td>
                   <span className="font-mono text-xs text-slate-400">

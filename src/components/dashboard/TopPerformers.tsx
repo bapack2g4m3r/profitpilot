@@ -13,8 +13,9 @@ interface TopPerformersProps {
   }>;
 }
 
-export default function TopPerformers({ products }: TopPerformersProps) {
-  const maxCommission = products.length > 0 ? products[0].total_commission : 1;
+export default function TopPerformers({ products = [] }: TopPerformersProps) {
+  const safeProducts = products || [];
+  const maxCommission = safeProducts.length > 0 ? safeProducts[0].total_commission : 1;
 
   return (
     <div className="apple-card animate-fade-in flex flex-col justify-between" style={{ animationDelay: '0.25s', opacity: 0 }}>
@@ -29,13 +30,13 @@ export default function TopPerformers({ products }: TopPerformersProps) {
           </div>
         </div>
 
-        {products.length === 0 ? (
+        {safeProducts.length === 0 ? (
           <div className="flex items-center justify-center h-44 text-slate-500 text-xs">
             Belum ada data komisi pada periode ini.
           </div>
         ) : (
           <div className="space-y-3.5">
-            {products.map((product, index) => {
+            {safeProducts.map((product, index) => {
               const percentage = (product.total_commission / maxCommission) * 100;
               const badgeBg = index === 0 ? 'bg-amber-400/20 text-amber-300 border-amber-400/30' :
                               index === 1 ? 'bg-slate-300/20 text-slate-200 border-slate-300/30' :
