@@ -5,7 +5,7 @@ import {
   Compass, Plus, Sparkles, ExternalLink, Copy, Check, Trash2, Edit3, Eye,
   Zap, ArrowRight, Smartphone, RefreshCw, BarChart2, Split, ShieldCheck, Filter,
   Percent, MousePointer, ShoppingCart, DollarSign, ShoppingBag, Code, Download,
-  Layers, CheckCircle2, Play
+  Layers, CheckCircle2, Play, Heart, Star, ChevronRight, MessageSquare
 } from 'lucide-react';
 import { formatIDR, formatNumber } from '@/lib/utils';
 
@@ -60,22 +60,38 @@ export default function LandingPagesDashboard() {
   const [formName, setFormName] = useState('');
   const [formSlug, setFormSlug] = useState('');
   const [formProductName, setFormProductName] = useState('');
-  const [formShopName, setFormShopName] = useState('Toko Marketplace Official');
-  const [formOriginalPrice, setFormOriginalPrice] = useState('150000');
-  const [formPromoPrice, setFormPromoPrice] = useState('89000');
+  const [formShopName, setFormShopName] = useState('Bisah Watch Original');
+  const [formOriginalPrice, setFormOriginalPrice] = useState('2500000');
+  const [formPromoPrice, setFormPromoPrice] = useState('1770000');
   const [formRating, setFormRating] = useState('4.9');
-  const [formSoldCount, setFormSoldCount] = useState('2.5rb+');
-  const [formImageUrl, setFormImageUrl] = useState('https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&auto=format&fit=crop&q=80');
-  const [formDescription, setFormDescription] = useState('Produk unggulan pencerah wajah kualitas terjamin BPOM.');
-  const [formHighlights, setFormHighlights] = useState('Formulasi Korea, Niacinamide 5%, Hasil Terlihat 7 Hari');
-  const [formCtaText, setFormCtaText] = useState('CEK PROMO');
+  const [formSoldCount, setFormSoldCount] = useState('13 Terjual');
+  const [formImageUrl, setFormImageUrl] = useState('https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80');
+  const [formDescription, setFormDescription] = useState('Kelengkapan unit dan charger original, tidak ada box ori, dikirimkan dengan box toko.');
+  const [formHighlights, setFormHighlights] = useState('Sol Empuk Anti Slip, Ringan Nyaman, Pilihan Warna Estetik');
+  const [formCtaText, setFormCtaText] = useState('BELI DENGAN VOUCHER RP1.770.000');
   const [formAffiliateUrl, setFormAffiliateUrl] = useState('https://shope.ee/demo-link');
-  const [formCampaignId, setFormCampaignId] = useState('campaign_beauty_broad');
+  const [formCampaignId, setFormCampaignId] = useState('campaign_suunto_watch');
   const [formMetaPixelId, setFormMetaPixelId] = useState('1234567890');
-  const [formRedirectDelay, setFormRedirectDelay] = useState<number>(1.0);
+  const [formRedirectDelay, setFormRedirectDelay] = useState<number>(0.3);
   const [formPixelEvent, setFormPixelEvent] = useState<string>('PageView + Lead');
   const [formBrowserTitle, setFormBrowserTitle] = useState<string>('Mengarahkan ke Shopee...');
   const [saving, setSaving] = useState(false);
+
+  // WYSIWYG Interactive Editing State inside Mobile Frame
+  const [activeEditField, setActiveEditField] = useState<string | null>(null);
+  
+  // Custom Reviews List
+  const [reviewsList, setReviewsList] = useState<Array<{ id: number; name: string; stars: number; text: string; date: string }>>([
+    { id: 1, name: 'kinzaghaisanrayyan', stars: 5, text: 'so far so good, semoga gada masalah dan aman sentosa', date: '2026-09-02' },
+    { id: 2, name: 'rina_skincare', stars: 5, text: 'Pengiriman cepat banget, produk ori 100%! Recomended bgt.', date: '2026-09-01' }
+  ]);
+
+  // Custom Store Products List
+  const [storeProductsList, setStoreProductsList] = useState<Array<{ id: number; name: string; price: number; sold: string; img: string }>>([
+    { id: 1, name: 'AMAZFIT Pace 2 GPS Running Outdoor', price: 370000, sold: '35 terjual', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&auto=format&fit=crop&q=80' },
+    { id: 2, name: 'SMARTWATCH XIAOMI S1...', price: 600000, sold: '19 terjual', img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&auto=format&fit=crop&q=80' },
+    { id: 3, name: 'XIAOMI REDMI WATCH LITE', price: 150000, sold: '4.9 rating', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&auto=format&fit=crop&q=80' }
+  ]);
 
   const fetchPages = useCallback(async () => {
     setLoading(true);
@@ -99,22 +115,22 @@ export default function LandingPagesDashboard() {
     setEditingId(null);
     setFormType(type);
     setFormTemplate(type === 'BLINK' ? 'REDIRECT' : 'PRODUCT');
-    setFormName(type === 'BLINK' ? 'Serum Glowing - Blink' : 'Serum Glowing X');
-    setFormSlug(type === 'BLINK' ? 'serum-glowing-blink-new' : 'serum-glowing-new');
-    setFormProductName('Serum Glowing Vitamin C 30ml Anti Aging Brightening');
-    setFormShopName('BeautyGlow Official Store');
-    setFormOriginalPrice('150000');
-    setFormPromoPrice('89000');
+    setFormName(type === 'BLINK' ? 'Jam Tangan Suunto - Blink' : 'Jam Tangan Suunto 7');
+    setFormSlug(type === 'BLINK' ? 'jam-tangan-suunto-blink' : 'jam-tangan-suunto-7');
+    setFormProductName('Jam Tangan Suunto 7 WearOS by Google GPS Outdoor Original');
+    setFormShopName('Bisah Watch Original');
+    setFormOriginalPrice('2500000');
+    setFormPromoPrice('1770000');
     setFormRating('4.9');
-    setFormSoldCount('2.5rb+');
-    setFormImageUrl('https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&auto=format&fit=crop&q=80');
-    setFormDescription('Serum pencerah wajah dengan Vitamin C murni 10% & Niacinamide.');
-    setFormHighlights('Formulasi Korea, BPOM Approved, Hasil 7 Hari');
-    setFormCtaText(type === 'BLINK' ? 'LIHAT SEKARANG' : 'CEK PROMO');
+    setFormSoldCount('13 Terjual');
+    setFormImageUrl('https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80');
+    setFormDescription('Kelengkapan unit dan charger original, tidak ada box ori, dikirimkan dengan box toko.');
+    setFormHighlights('GPS Outdoor, Body Water Resistant, Full Set Charger');
+    setFormCtaText(type === 'BLINK' ? 'LIHAT SEKARANG' : 'BELI DENGAN VOUCHER RP1.770.000');
     setFormAffiliateUrl('https://shope.ee/demo-link');
-    setFormCampaignId('campaign_beauty_broad');
+    setFormCampaignId('campaign_suunto_watch');
     setFormMetaPixelId('1234567890');
-    setFormRedirectDelay(1.0);
+    setFormRedirectDelay(0.3);
     setFormPixelEvent('PageView + Lead');
     setFormBrowserTitle('Mengarahkan ke Shopee...');
     setActiveTab('builder');
@@ -204,6 +220,36 @@ export default function LandingPagesDashboard() {
     navigator.clipboard.writeText(url);
     setCopiedSlug(slug);
     setTimeout(() => setCopiedSlug(null), 2000);
+  };
+
+  const handleAddReview = () => {
+    const newRev = {
+      id: Date.now(),
+      name: `buyer_${Math.floor(Math.random() * 1000)}`,
+      stars: 5,
+      text: 'Barang terjamin original, recommended seller!',
+      date: new Date().toISOString().split('T')[0]
+    };
+    setReviewsList([...reviewsList, newRev]);
+  };
+
+  const handleDeleteReview = (id: number) => {
+    setReviewsList(reviewsList.filter(r => r.id !== id));
+  };
+
+  const handleAddStoreProduct = () => {
+    const newProd = {
+      id: Date.now(),
+      name: `PRODUK REKOMENDASI TOKO #${storeProductsList.length + 1}`,
+      price: 250000,
+      sold: '10 terjual',
+      img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&auto=format&fit=crop&q=80'
+    };
+    setStoreProductsList([...storeProductsList, newProd]);
+  };
+
+  const handleDeleteStoreProduct = (id: number) => {
+    setStoreProductsList(storeProductsList.filter(p => p.id !== id));
   };
 
   // Standalone HTML & CSS Generator for Exporting
@@ -314,11 +360,11 @@ export default function LandingPagesDashboard() {
         <div>
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <Compass size={20} className="text-blue-400" />
-            <h1 className="text-2xl font-bold text-white">Landing Page Studio &amp; Pixel Bridge</h1>
-            <span className="apple-badge apple-badge-blue text-[10px]">SHOPEE MOBILE &amp; PIXEL BRIDGE</span>
+            <h1 className="text-2xl font-bold text-white">Visual Shopee LP Studio &amp; Click-to-Edit</h1>
+            <span className="apple-badge apple-badge-blue text-[10px]">INLINE CLICK-TO-EDIT EDITOR</span>
           </div>
           <p className="text-sm text-slate-400">
-            Generator Landing Page &amp; Pixel Bridge 100% Shopee Mobile UI untuk Meta Ads Affiliate.
+            Klik elemen di dalam frame preview mobile web untuk langsung mengedit teks, harga, foto, testimoni, atau produk toko!
           </p>
         </div>
 
@@ -348,7 +394,7 @@ export default function LandingPagesDashboard() {
             activeTab === 'builder' ? 'bg-white/10 text-white shadow' : 'text-slate-400 hover:text-white'
           }`}
         >
-          <Smartphone size={14} /> Visual Mobile Builder &amp; Export Standalone HTML
+          <Smartphone size={14} /> Visual WYSIWYG Builder &amp; Click-to-Edit
         </button>
         <button
           onClick={() => setActiveTab('analytics')}
@@ -504,7 +550,7 @@ export default function LandingPagesDashboard() {
         </div>
       )}
 
-      {/* TAB 2: VISUAL MOBILE BUILDER & LIVE EDITOR */}
+      {/* TAB 2: VISUAL WYSIWYG BUILDER & CLICK-TO-EDIT PREVIEW */}
       {activeTab === 'builder' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Form Editor */}
@@ -571,8 +617,8 @@ export default function LandingPagesDashboard() {
                   </div>
                 </div>
 
-                {/* Quick Upload Action Buttons */}
-                <div className="flex items-center gap-2 flex-wrap p-2 rounded-xl bg-white/[0.02] border border-white/5">
+                {/* Quick Asset Uploaders */}
+                <div className="flex items-center gap-2 flex-wrap p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
                   <span className="text-[11px] text-slate-400 font-semibold mr-1">Quick Assets:</span>
                   <label className="apple-btn-secondary text-[10px] py-1 px-2.5 cursor-pointer flex items-center gap-1">
                     <Plus size={12} className="text-emerald-400" />
@@ -582,38 +628,46 @@ export default function LandingPagesDashboard() {
                       if (file) setFormImageUrl(URL.createObjectURL(file));
                     }} />
                   </label>
-                  <label className="apple-btn-secondary text-[10px] py-1 px-2.5 cursor-pointer flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={handleAddStoreProduct}
+                    className="apple-btn-secondary text-[10px] py-1 px-2.5 flex items-center gap-1"
+                  >
                     <Plus size={12} className="text-blue-400" />
-                    <span>+ Upload Produk Toko</span>
-                    <input type="file" accept="image/*" className="hidden" onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) setFormImageUrl(URL.createObjectURL(file));
-                    }} />
-                  </label>
+                    <span>+ Produk Toko Lain</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAddReview}
+                    className="apple-btn-secondary text-[10px] py-1 px-2.5 flex items-center gap-1 text-rose-400"
+                  >
+                    <Plus size={12} />
+                    <span>+ Tambah Testimoni Baru</span>
+                  </button>
                 </div>
 
                 {/* Basic Info */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs text-slate-400 block mb-1">Nama Internal Landing Page *</label>
-                    <input type="text" value={formName} onChange={(e) => setFormName(e.target.value)} required className="input-field" placeholder="Serum Glowing Campaign X" />
+                    <input type="text" value={formName} onChange={(e) => setFormName(e.target.value)} required className="input-field" placeholder="Jam Tangan Suunto 7" />
                   </div>
                   <div>
                     <label className="text-xs text-slate-400 block mb-1">Custom Slug URL (/lp/slug) *</label>
-                    <input type="text" value={formSlug} onChange={(e) => setFormSlug(e.target.value)} required className="input-field font-mono text-blue-400" placeholder="serum-glowing-x" />
+                    <input type="text" value={formSlug} onChange={(e) => setFormSlug(e.target.value)} required className="input-field font-mono text-blue-400" placeholder="jam-tangan-suunto-7" />
                   </div>
                 </div>
 
                 {/* Product Info */}
                 <div>
                   <label className="text-xs text-slate-400 block mb-1">Nama Produk Shopee *</label>
-                  <input type="text" value={formProductName} onChange={(e) => setFormProductName(e.target.value)} required className="input-field" placeholder="Serum Glowing Vitamin C 30ml" />
+                  <input type="text" value={formProductName} onChange={(e) => setFormProductName(e.target.value)} required className="input-field" placeholder="Jam Tangan Suunto 7 WearOS" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs text-slate-400 block mb-1">Nama Toko Marketplace</label>
-                    <input type="text" value={formShopName} onChange={(e) => setFormShopName(e.target.value)} className="input-field" placeholder="BeautyGlow Official Store" />
+                    <input type="text" value={formShopName} onChange={(e) => setFormShopName(e.target.value)} className="input-field" placeholder="Bisah Watch Original" />
                   </div>
                   <div>
                     <label className="text-xs text-slate-400 block mb-1">Image URL Thumbnail</label>
@@ -635,7 +689,7 @@ export default function LandingPagesDashboard() {
                       </div>
                       <div>
                         <label className="text-xs text-slate-400 block mb-1">Terjual Count</label>
-                        <input type="text" value={formSoldCount} onChange={(e) => setFormSoldCount(e.target.value)} className="input-field font-mono" placeholder="2.5rb+" />
+                        <input type="text" value={formSoldCount} onChange={(e) => setFormSoldCount(e.target.value)} className="input-field font-mono" placeholder="13 Terjual" />
                       </div>
                     </div>
 
@@ -643,66 +697,7 @@ export default function LandingPagesDashboard() {
                       <label className="text-xs text-slate-400 block mb-1">Deskripsi Ringkas Produk</label>
                       <textarea value={formDescription} onChange={(e) => setFormDescription(e.target.value)} rows={3} className="input-field text-xs" />
                     </div>
-
-                    <div>
-                      <label className="text-xs text-slate-400 block mb-1">Keunggulan / Highlights (Pisahkan Komma)</label>
-                      <input type="text" value={formHighlights} onChange={(e) => setFormHighlights(e.target.value)} className="input-field" placeholder="BPOM Approved, Niacinamide 5%, Hasil 7 Hari" />
-                    </div>
                   </>
-                )}
-
-                {/* Mode 2 Specific Delay & Event Selector */}
-                {formType === 'BLINK' && (
-                  <div className="space-y-3 p-3.5 rounded-2xl bg-amber-500/5 border border-amber-500/20">
-                    <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                      <Zap size={14} /> Pengaturan Pixel Bridge Fast Redirect
-                    </h4>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-xs text-slate-400 block mb-1 font-semibold">Event Meta Pixel Ditembak</label>
-                        <select
-                          value={formPixelEvent}
-                          onChange={(e) => setFormPixelEvent(e.target.value)}
-                          className="input-field font-semibold text-xs"
-                        >
-                          <option value="PageView + Lead">PageView + Lead (Direkomendasikan)</option>
-                          <option value="PageView + Purchase">PageView + Purchase</option>
-                          <option value="PageView + ViewContent">PageView + ViewContent</option>
-                          <option value="Custom ShopeeAffiliateRedirect">Custom ShopeeAffiliateRedirect</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="text-xs text-slate-400 block mb-1">Judul Tab Browser</label>
-                        <input
-                          type="text"
-                          value={formBrowserTitle}
-                          onChange={(e) => setFormBrowserTitle(e.target.value)}
-                          className="input-field text-xs"
-                          placeholder="Mengarahkan ke Shopee..."
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-xs text-slate-400 block mb-1 font-semibold">Waktu Delay Redirect (Detik) *</label>
-                      <div className="grid grid-cols-5 gap-2">
-                        {[0.1, 0.3, 0.5, 1.0, 2.0].map((d) => (
-                          <button
-                            key={d}
-                            type="button"
-                            onClick={() => setFormRedirectDelay(d)}
-                            className={`py-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
-                              formRedirectDelay === d ? 'bg-amber-500 text-black shadow' : 'bg-white/5 text-slate-400'
-                            }`}
-                          >
-                            {d}s {d === 0.3 ? '(Ideal)' : ''}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
                 )}
 
                 {/* Destination & Tracking Links */}
@@ -717,7 +712,7 @@ export default function LandingPagesDashboard() {
                   <div className="grid grid-cols-3 gap-3">
                     <div>
                       <label className="text-xs text-slate-400 block mb-1">Teks Tombol CTA</label>
-                      <input type="text" value={formCtaText} onChange={(e) => setFormCtaText(e.target.value)} className="input-field font-semibold" placeholder="CEK PROMO" />
+                      <input type="text" value={formCtaText} onChange={(e) => setFormCtaText(e.target.value)} className="input-field font-semibold" placeholder="BELI DENGAN VOUCHER" />
                     </div>
                     <div>
                       <label className="text-xs text-slate-400 block mb-1">Meta Campaign ID</label>
@@ -740,12 +735,12 @@ export default function LandingPagesDashboard() {
             </div>
           </div>
 
-          {/* Right Mobile Phone Live Frame Preview */}
+          {/* Right Interactive Mobile Frame WYSIWYG Click-to-Edit Preview */}
           <div className="lg:col-span-5 flex flex-col items-center">
             <div className="sticky top-6 w-full max-w-[340px]">
               <div className="flex items-center justify-between mb-2 px-1">
                 <span className="text-xs font-semibold text-slate-400 flex items-center gap-1">
-                  <Smartphone size={14} className="text-emerald-400" /> Live Mobile Frame Preview
+                  <Smartphone size={14} className="text-emerald-400" /> Interactive Click-to-Edit Preview
                 </span>
                 <span className="apple-badge apple-badge-purple text-[9px]">{formType} PREVIEW</span>
               </div>
@@ -780,70 +775,178 @@ export default function LandingPagesDashboard() {
                       </button>
                     </div>
                   ) : (
-                    // 100% Shopee Mobile Live Preview Frame
+                    // 100% Shopee Mobile Interactive Click-to-Edit Frame
                     <div className="flex-1 bg-[#f5f5f5] pb-14 text-[10px]">
-                      {/* Top Nav */}
-                      <div className="bg-white p-2 border-b flex items-center justify-between">
+                      {/* Top Nav (Clickable Title) */}
+                      <div
+                        onClick={() => setActiveEditField('title')}
+                        className={`bg-white p-2 border-b flex items-center justify-between cursor-pointer transition-all ${
+                          activeEditField === 'title' ? 'border-2 border-dashed border-red-500 bg-red-50/50' : 'hover:bg-slate-50'
+                        }`}
+                        title="Klik untuk edit Judul Produk"
+                      >
                         <div className="flex items-center gap-1 bg-[#f5f5f5] px-2 py-0.5 rounded-full truncate flex-1 mr-2 text-[9px]">
                           <span className="bg-[#ee4d2d] text-white font-black px-1 rounded text-[8px]">MALL</span>
-                          <span className="font-bold text-slate-800 truncate">{formShopName || 'Toko Resmi'}</span>
+                          <span className="font-bold text-slate-800 truncate">{formProductName || 'Judul Produk'}</span>
                         </div>
                         <ShoppingBag size={12} className="text-slate-600" />
                       </div>
-                      {/* Media */}
-                      <div className="aspect-square bg-white relative">
+
+                      {/* Hero Image (Click to replace) */}
+                      <div
+                        onClick={() => setActiveEditField('image')}
+                        className={`aspect-square bg-white relative cursor-pointer group ${
+                          activeEditField === 'image' ? 'border-2 border-dashed border-red-500' : ''
+                        }`}
+                        title="Klik untuk ganti Gambar Hero"
+                      >
                         <img src={formImageUrl} alt="preview" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[10px] font-bold transition-opacity">
+                          📷 Klik Ganti Gambar
+                        </div>
                         <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[8px] px-1.5 py-0.5 rounded-full font-mono">
-                          1/4
+                          1/3
                         </div>
                       </div>
-                      {/* Price Banner */}
-                      <div className="bg-white p-2.5 space-y-1">
+
+                      {/* Price & Voucher Section (Clickable Price) */}
+                      <div
+                        onClick={() => setActiveEditField('price')}
+                        className={`bg-white p-2.5 space-y-1 cursor-pointer transition-all ${
+                          activeEditField === 'price' ? 'border-2 border-dashed border-red-500 bg-red-50/50' : 'hover:bg-slate-50'
+                        }`}
+                        title="Klik untuk edit Harga"
+                      >
                         <div className="flex items-baseline gap-1.5">
                           <span className="text-base font-black text-[#ee4d2d] font-sans">{formatIDR(parseFloat(formPromoPrice) || 0)}</span>
                           <span className="text-[9px] text-slate-400 line-through">{formatIDR(parseFloat(formOriginalPrice) || 0)}</span>
                         </div>
                         <div className="flex gap-1 text-[8px]">
+                          <span className="bg-[#fff0ed] text-[#ee4d2d] border border-[#ee4d2d]/30 font-semibold px-1 rounded">Dengan Voucher</span>
                           <span className="bg-[#fff0ed] text-[#ee4d2d] border border-[#ee4d2d]/30 font-semibold px-1 rounded">Diskon Promo</span>
-                          <span className="bg-[#fff0ed] text-[#ee4d2d] border border-[#ee4d2d]/30 font-semibold px-1 rounded">Voucher Extra</span>
                         </div>
-                        <p className="text-[10px] font-semibold text-slate-900 leading-tight line-clamp-2">
-                          <span className="bg-[#ee4d2d] text-white text-[8px] font-black px-1 rounded mr-1">MALL</span>
+                        <p className="text-[10px] font-semibold text-slate-900 leading-tight line-clamp-2 pt-0.5">
+                          <span className="bg-[#ee4d2d] text-white text-[8px] font-black px-1 rounded mr-1">Star</span>
                           {formProductName}
                         </p>
-                        <p className="text-[8px] text-slate-500 pt-0.5">★ {formRating} • {formSoldCount} Terjual</p>
+                        <p className="text-[8px] text-slate-500 pt-0.5">★ {formRating} • {formSoldCount}</p>
                       </div>
-                      {/* Shipping Bar */}
-                      <div className="bg-white mt-1 p-2 border-y border-slate-100 text-[8px] space-y-1 text-slate-600">
-                        <div className="flex items-center gap-1">
-                          <span className="font-bold text-slate-800">4 Jam</span>
-                          <span>Pengiriman Cepat • Tiba Esok Hari</span>
+
+                      {/* Store Profile Card (Clickable Store Name) */}
+                      <div
+                        onClick={() => setActiveEditField('store')}
+                        className={`bg-white mt-1 p-2 border-y border-slate-100 flex items-center justify-between cursor-pointer ${
+                          activeEditField === 'store' ? 'border-2 border-dashed border-red-500 bg-red-50/50' : ''
+                        }`}
+                        title="Klik untuk edit Toko"
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-7 h-7 rounded-full bg-slate-200 overflow-hidden shrink-0">
+                            <img src={formImageUrl} alt="store" className="w-full h-full object-cover" />
+                          </div>
+                          <div>
+                            <span className="font-bold text-slate-900 text-[9px] block">{formShopName}</span>
+                            <span className="text-[7.5px] text-slate-400">Aktif 4 jam lalu • KOTA JAKARTA</span>
+                          </div>
                         </div>
-                        <div className="flex gap-2 text-[7.5px] pt-0.5 text-slate-500">
-                          <span>✓ 15 Hari Pengembalian</span>
-                          <span>✓ 100% Original</span>
-                          <span>✓ COD</span>
+                        <button className="px-2 py-0.5 rounded border border-[#ee4d2d] text-[#ee4d2d] text-[8px] font-bold">
+                          Kunjungi Toko
+                        </button>
+                      </div>
+
+                      {/* Produk Lain Dari Toko Ini (With Trash Icon & Add Product Button) */}
+                      <div className="bg-white mt-1 p-2 border-y border-slate-100 space-y-1.5">
+                        <div className="flex items-center justify-between text-[9px]">
+                          <span className="font-bold text-slate-900 uppercase">PRODUK LAIN DARI TOKO INI</span>
+                          <button
+                            type="button"
+                            onClick={handleAddStoreProduct}
+                            className="text-[#ee4d2d] font-bold text-[8px] hover:underline"
+                          >
+                            + Tambah Produk Toko
+                          </button>
+                        </div>
+                        <div className="flex gap-1.5 overflow-x-auto pb-1">
+                          {storeProductsList.map((prod) => (
+                            <div key={prod.id} className="w-20 rounded bg-slate-50 p-1 border border-slate-100 relative group shrink-0">
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteStoreProduct(prod.id)}
+                                className="absolute top-1 right-1 w-4 h-4 rounded-full bg-rose-500 text-white flex items-center justify-center text-[8px] z-10 shadow"
+                                title="Hapus Produk Ini"
+                              >
+                                🗑️
+                              </button>
+                              <img src={prod.img} alt="p" className="w-full aspect-square object-cover rounded" />
+                              <p className="text-[7.5px] font-medium text-slate-800 line-clamp-1 border-dashed border-red-400 mt-0.5">{prod.name}</p>
+                              <p className="text-[8.5px] font-bold text-[#ee4d2d]">{formatIDR(prod.price)}</p>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                      {/* Rating Summary */}
-                      <div className="bg-white mt-1 p-2 border-y border-slate-100 space-y-1">
-                        <div className="flex items-center justify-between text-[9px] font-bold">
-                          <span>Penilaian Produk (4.9/5)</span>
-                          <span className="text-[#ee4d2d]">100% Puas</span>
+
+                      {/* Deskripsi & Spesifikasi */}
+                      <div
+                        onClick={() => setActiveEditField('desc')}
+                        className={`bg-white mt-1 p-2 border-y border-slate-100 space-y-1 cursor-pointer ${
+                          activeEditField === 'desc' ? 'border-2 border-dashed border-red-500 bg-red-50/50' : ''
+                        }`}
+                        title="Klik untuk edit Deskripsi"
+                      >
+                        <span className="font-bold text-slate-900 text-[9px] block">Deskripsi Produk</span>
+                        <p className="text-[8px] text-slate-600 line-clamp-3 leading-snug">
+                          {formDescription}
+                        </p>
+                      </div>
+
+                      {/* Penilaian Produk & Testimoni Section (With + Tambah Testimoni Baru Button) */}
+                      <div className="bg-white mt-1 p-2 border-y border-slate-100 space-y-1.5">
+                        <div className="flex items-center justify-between text-[9px]">
+                          <span className="font-bold text-slate-900">Penilaian Produk ({reviewsList.length} Ulasan)</span>
+                          <button
+                            type="button"
+                            onClick={handleAddReview}
+                            className="text-[#ee4d2d] font-bold text-[8.5px] hover:underline"
+                          >
+                            + + Tambah Testimoni Baru
+                          </button>
                         </div>
-                        <div className="bg-[#fcfbf7] p-1.5 rounded border border-amber-200 text-[8px] text-slate-700">
-                          ★ Tipe kulit terawat &amp; tekstur lembut tidak perih...
+                        <div className="space-y-1.5">
+                          {reviewsList.map((rev) => (
+                            <div key={rev.id} className="p-1.5 rounded bg-slate-50 border border-slate-100 text-[8px] relative group space-y-0.5">
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteReview(rev.id)}
+                                className="absolute top-1 right-1 text-slate-400 hover:text-rose-500 text-[9px]"
+                                title="Hapus Testimoni"
+                              >
+                                🗑️
+                              </button>
+                              <div className="flex items-center gap-1 font-bold text-slate-800">
+                                <span>{rev.name}</span>
+                                <div className="flex text-[#ee4d2d]">★★★★★</div>
+                              </div>
+                              <p className="text-slate-600 text-[8px] leading-tight">{rev.text}</p>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                      {/* Sticky Bar */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-white border-t p-1.5 flex items-center gap-1.5 h-12 z-20">
+
+                      {/* Sticky Bar (Clickable CTA) */}
+                      <div
+                        onClick={() => setActiveEditField('cta')}
+                        className={`absolute bottom-0 left-0 right-0 bg-white border-t p-1.5 flex items-center gap-1.5 h-12 z-20 cursor-pointer ${
+                          activeEditField === 'cta' ? 'border-2 border-dashed border-red-500' : ''
+                        }`}
+                        title="Klik untuk edit Teks Tombol CTA"
+                      >
                         <div className="text-[8px] text-slate-500 px-1 border-r text-center">
                           💬 Chat
                         </div>
                         <div className="text-[8px] text-slate-500 px-1 border-r text-center">
                           🛒 Keranjang
                         </div>
-                        <button className="flex-1 bg-[#ee4d2d] text-white font-extrabold text-[9px] py-2 rounded uppercase text-center">
+                        <button className="flex-1 bg-[#ee4d2d] text-white font-extrabold text-[9px] py-2 rounded uppercase text-center truncate px-1">
                           {formCtaText || 'BELI DENGAN VOUCHER'}
                         </button>
                       </div>
@@ -947,7 +1050,7 @@ export default function LandingPagesDashboard() {
               <tbody>
                 <tr>
                   <td><span className="apple-badge apple-badge-purple text-[9px]">Variant A (SHOPEE UI)</span></td>
-                  <td><span className="font-semibold text-xs text-white">Serum Glowing X</span></td>
+                  <td><span className="font-semibold text-xs text-white">Jam Tangan Suunto 7</span></td>
                   <td><span className="font-mono text-xs">1,250</span></td>
                   <td><span className="font-mono text-xs text-amber-400 font-bold">47.2%</span></td>
                   <td><span className="font-mono text-xs font-bold text-purple-400">42 Orders</span></td>
@@ -957,7 +1060,7 @@ export default function LandingPagesDashboard() {
                 </tr>
                 <tr>
                   <td><span className="apple-badge apple-badge-amber text-[9px]">Variant B (PIXEL BRIDGE)</span></td>
-                  <td><span className="font-semibold text-xs text-white">Serum Glowing X - Blink</span></td>
+                  <td><span className="font-semibold text-xs text-white">Jam Tangan Suunto - Blink</span></td>
                   <td><span className="font-mono text-xs">1,180</span></td>
                   <td><span className="font-mono text-xs text-emerald-400 font-bold">86.4%</span></td>
                   <td><span className="font-mono text-xs font-bold text-purple-400">38 Orders</span></td>
