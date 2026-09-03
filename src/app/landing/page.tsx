@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   Compass, Plus, Sparkles, ExternalLink, Copy, Check, Trash2, Edit3, Eye,
   Zap, ArrowRight, Smartphone, RefreshCw, BarChart2, Split, ShieldCheck, Filter,
-  Percent, MousePointer, ShoppingCart, DollarSign, ShoppingBag
+  Percent, MousePointer, ShoppingCart, DollarSign, ShoppingBag, Code, Download,
+  Layers, CheckCircle2, Play
 } from 'lucide-react';
 import { formatIDR, formatNumber } from '@/lib/utils';
 
@@ -50,6 +51,7 @@ export default function LandingPagesDashboard() {
   const [activeTab, setActiveTab] = useState<'list' | 'builder' | 'analytics' | 'ab_test'>('list');
   const [typeFilter, setTypeFilter] = useState<'all' | 'CUSTOM' | 'BLINK'>('all');
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
+  const [copiedHtml, setCopiedHtml] = useState(false);
 
   // Form State for Builder
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -71,6 +73,8 @@ export default function LandingPagesDashboard() {
   const [formCampaignId, setFormCampaignId] = useState('campaign_beauty_broad');
   const [formMetaPixelId, setFormMetaPixelId] = useState('1234567890');
   const [formRedirectDelay, setFormRedirectDelay] = useState<number>(1.0);
+  const [formPixelEvent, setFormPixelEvent] = useState<string>('PageView + Lead');
+  const [formBrowserTitle, setFormBrowserTitle] = useState<string>('Mengarahkan ke Shopee...');
   const [saving, setSaving] = useState(false);
 
   const fetchPages = useCallback(async () => {
@@ -111,6 +115,8 @@ export default function LandingPagesDashboard() {
     setFormCampaignId('campaign_beauty_broad');
     setFormMetaPixelId('1234567890');
     setFormRedirectDelay(1.0);
+    setFormPixelEvent('PageView + Lead');
+    setFormBrowserTitle('Mengarahkan ke Shopee...');
     setActiveTab('builder');
   };
 
@@ -200,32 +206,133 @@ export default function LandingPagesDashboard() {
     setTimeout(() => setCopiedSlug(null), 2000);
   };
 
+  // Standalone HTML & CSS Generator for Exporting
+  const generateStandaloneHTML = () => {
+    if (formType === 'BLINK') {
+      return `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${formBrowserTitle || 'Mengarahkan ke Shopee...'}</title>
+  ${formMetaPixelId ? `<!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+    (window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '${formMetaPixelId}');
+    fbq('track', 'PageView');
+    fbq('track', 'Lead');
+  </script>` : ''}
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #090b10; color: #fff; display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 20px; }
+    .card { background: rgba(19, 23, 34, 0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 32px; max-width: 400px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+    .spinner { width: 44px; height: 44px; border: 3px solid rgba(238, 77, 45, 0.2); border-top-color: #ee4d2d; border-radius: 50%; animation: spin 1s linear infinite; margin: 16px auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .btn { display: inline-block; width: 100%; padding: 14px; background: #ee4d2d; color: #fff; font-weight: bold; border-radius: 12px; text-decoration: none; margin-top: 16px; font-size: 13px; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="spinner"></div>
+    <h3 style="font-size:15px; font-weight:bold;">${formProductName || 'Mengarahkan ke Halaman Resmi Shopee...'}</h3>
+    <p style="color: #94a3b8; font-size: 12px; margin-top: 8px;">Anda akan dialihkan secara otomatis...</p>
+    <a href="${formAffiliateUrl || '#'}" class="btn">${formCtaText || 'Buka Halaman Produk'}</a>
+  </div>
+  <script>
+    setTimeout(function() { window.location.href = "${formAffiliateUrl || '#'}"; }, ${formRedirectDelay * 1000});
+  </script>
+</body>
+</html>`;
+    } else {
+      return `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${formProductName}</title>
+  ${formMetaPixelId ? `<script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '${formMetaPixelId}');
+    fbq('track', 'PageView');
+  </script>` : ''}
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f5; color: #222; }
+    .container { max-width: 450px; margin: 0 auto; background: #f5f5f5; min-height: 100vh; padding-bottom: 70px; }
+    .header { sticky top: 0; background: #fff; border-bottom: 1px solid #eee; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .price-box { background: #fff; padding: 12px; margin-bottom: 8px; }
+    .price { font-size: 22px; font-weight: 900; color: #ee4d2d; }
+    .sticky-bar { position: fixed; bottom: 0; left: 0; right: 0; max-width: 450px; margin: 0 auto; background: #fff; border-top: 1px solid #eee; padding: 8px; display: flex; }
+    .cta-btn { flex: 1; background: #ee4d2d; color: #fff; font-weight: bold; border: none; padding: 12px; border-radius: 8px; font-size: 13px; text-transform: uppercase; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span style="background:#ee4d2d; color:#fff; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold;">MALL</span>
+      <span>${formShopName}</span>
+    </div>
+    <img src="${formImageUrl}" style="width:100%; aspect-ratio:1/1; object-fit:cover;">
+    <div class="price-box">
+      <div class="price">${formatIDR(parseFloat(formPromoPrice) || 0)}</div>
+      <h1 style="font-size:14px; font-weight:bold; margin-top:6px;">${formProductName}</h1>
+    </div>
+    <div class="sticky-bar">
+      <button class="cta-btn" onclick="window.location.href='${formAffiliateUrl}'">${formCtaText}</button>
+    </div>
+  </div>
+</body>
+</html>`;
+    }
+  };
+
+  const copyHTMLCode = () => {
+    const code = generateStandaloneHTML();
+    navigator.clipboard.writeText(code);
+    setCopiedHtml(true);
+    setTimeout(() => setCopiedHtml(false), 2000);
+  };
+
+  const downloadHTMLFile = () => {
+    const code = generateStandaloneHTML();
+    const blob = new Blob([code], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${formSlug || 'landing-page'}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <div className="max-w-[1400px] mx-auto space-y-6">
+    <div className="max-w-[1400px] mx-auto space-y-6 font-sans">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <Compass size={20} className="text-blue-400" />
-            <h1 className="text-2xl font-bold text-white">Landing Page Generator</h1>
-            <span className="apple-badge apple-badge-blue text-[10px]">CUSTOM &amp; BLINK MODES</span>
+            <h1 className="text-2xl font-bold text-white">Landing Page Studio &amp; Pixel Bridge</h1>
+            <span className="apple-badge apple-badge-blue text-[10px]">SHOPEE MOBILE &amp; PIXEL BRIDGE</span>
           </div>
           <p className="text-sm text-slate-400">
-            Generator landing page jembatan lalu lintas iklan Meta Ads ke Shopee Affiliate.
+            Generator Landing Page &amp; Pixel Bridge 100% Shopee Mobile UI untuk Meta Ads Affiliate.
           </p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           <button onClick={() => handleCreateNew('CUSTOM')} className="apple-btn-primary text-xs">
-            <Plus size={14} /> Buat Custom Shopping Page
+            <Plus size={14} /> Buat Shopee Mobile LP
           </button>
           <button onClick={() => handleCreateNew('BLINK')} className="apple-btn-secondary text-xs">
-            <Zap size={14} className="text-yellow-400" /> Buat Blink Page (Ultra Light)
+            <Zap size={14} className="text-amber-400" /> Buat Pixel Bridge LP (Fast Redirect)
           </button>
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Main Mode Tabs */}
       <div className="flex items-center gap-2 border-b border-white/5 pb-2 overflow-x-auto">
         <button
           onClick={() => setActiveTab('list')}
@@ -241,7 +348,7 @@ export default function LandingPagesDashboard() {
             activeTab === 'builder' ? 'bg-white/10 text-white shadow' : 'text-slate-400 hover:text-white'
           }`}
         >
-          <Smartphone size={14} /> Visual Mobile Builder &amp; Live Editor
+          <Smartphone size={14} /> Visual Mobile Builder &amp; Export Standalone HTML
         </button>
         <button
           onClick={() => setActiveTab('analytics')}
@@ -303,10 +410,10 @@ export default function LandingPagesDashboard() {
                   Semua ({pages.length})
                 </button>
                 <button onClick={() => setTypeFilter('CUSTOM')} className={`segmented-btn ${typeFilter === 'CUSTOM' ? 'active' : ''}`}>
-                  Custom Shopping
+                  Shopee Mobile UI
                 </button>
                 <button onClick={() => setTypeFilter('BLINK')} className={`segmented-btn ${typeFilter === 'BLINK' ? 'active' : ''}`}>
-                  Blink (Minimal)
+                  Pixel Bridge LP
                 </button>
               </div>
             </div>
@@ -325,9 +432,9 @@ export default function LandingPagesDashboard() {
                     <th>Campaign Meta</th>
                     <th>Visitors</th>
                     <th>Outbound Clicks</th>
-                    <th>CTR / Redirect %</th>
+                    <th>CTR %</th>
                     <th>Est. Profit</th>
-                    <th>Aksi</th>
+                    <th>Aksi &amp; Export</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -337,7 +444,7 @@ export default function LandingPagesDashboard() {
                       <tr key={p.id}>
                         <td>
                           <span className={`apple-badge text-[9px] ${p.landing_type === 'CUSTOM' ? 'apple-badge-purple' : 'apple-badge-amber'}`}>
-                            {p.landing_type === 'CUSTOM' ? '🛍️ CUSTOM' : '⚡ BLINK'}
+                            {p.landing_type === 'CUSTOM' ? '🛍️ SHOPEE UI' : '⚡ PIXEL BRIDGE'}
                           </span>
                         </td>
                         <td>
@@ -360,7 +467,7 @@ export default function LandingPagesDashboard() {
                               target="_blank"
                               rel="noopener noreferrer"
                               className="p-1 rounded-lg bg-white/5 hover:bg-white/10 text-blue-400"
-                              title="Buka Link Publik Live"
+                              title="Buka Link Live"
                             >
                               <ExternalLink size={14} />
                             </a>
@@ -404,18 +511,35 @@ export default function LandingPagesDashboard() {
           <div className="lg:col-span-7 space-y-4">
             <div className="apple-card space-y-4">
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <Smartphone size={16} className="text-blue-400" />
                   {editingId ? 'Edit Configuration' : 'Konfigurasi Landing Page Baru'}
                 </h3>
-                <span className="apple-badge apple-badge-purple text-[10px]">
-                  MODE: {formType}
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={copyHTMLCode}
+                    className="apple-btn-secondary text-[10px] py-1 px-2.5 flex items-center gap-1"
+                    title="Salin Kode HTML Standalone"
+                  >
+                    {copiedHtml ? <Check size={12} className="text-emerald-400" /> : <Code size={12} />}
+                    <span>{copiedHtml ? 'Kode Tersalin!' : 'Copy Kode HTML'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={downloadHTMLFile}
+                    className="apple-btn-primary text-[10px] py-1 px-2.5 flex items-center gap-1"
+                    title="Download File HTML"
+                  >
+                    <Download size={12} /> Download .html
+                  </button>
+                </div>
               </div>
 
               <form onSubmit={handleSaveForm} className="space-y-4">
                 {/* 1. Mode Selector */}
                 <div>
-                  <label className="text-xs text-slate-400 block mb-1 font-semibold">Tipe Landing Page Mode *</label>
+                  <label className="text-xs text-slate-400 block mb-1 font-semibold">Tipe Landing Page Generator Mode *</label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
@@ -425,10 +549,10 @@ export default function LandingPagesDashboard() {
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs">🛍️ MODE 1: CUSTOM SHOPPING</span>
+                        <span className="font-bold text-xs">🛍️ 1. SHOPEE MOBILE UI</span>
                         {formType === 'CUSTOM' && <Check size={14} className="text-purple-400" />}
                       </div>
-                      <span className="text-[10px] text-slate-400">Mobile Marketplace Experience (Shopee-like PD UX)</span>
+                      <span className="text-[10px] text-slate-400">100% Shopee Mobile Product Detail (Tingkatkan Konversi)</span>
                     </button>
 
                     <button
@@ -439,15 +563,36 @@ export default function LandingPagesDashboard() {
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs">⚡ MODE 2: BLINK PAGE</span>
+                        <span className="font-bold text-xs">⚡ 2. PIXEL BRIDGE LP</span>
                         {formType === 'BLINK' && <Check size={14} className="text-amber-400" />}
                       </div>
-                      <span className="text-[10px] text-slate-400">Ultra-light minimal fast redirect bridge</span>
+                      <span className="text-[10px] text-slate-400">Pixel Event Trigger &amp; Fast Auto Redirect (0.1s - 3s)</span>
                     </button>
                   </div>
                 </div>
 
-                {/* 2. Basic Info */}
+                {/* Quick Upload Action Buttons */}
+                <div className="flex items-center gap-2 flex-wrap p-2 rounded-xl bg-white/[0.02] border border-white/5">
+                  <span className="text-[11px] text-slate-400 font-semibold mr-1">Quick Assets:</span>
+                  <label className="apple-btn-secondary text-[10px] py-1 px-2.5 cursor-pointer flex items-center gap-1">
+                    <Plus size={12} className="text-emerald-400" />
+                    <span>+ Upload Gambar Hero</span>
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) setFormImageUrl(URL.createObjectURL(file));
+                    }} />
+                  </label>
+                  <label className="apple-btn-secondary text-[10px] py-1 px-2.5 cursor-pointer flex items-center gap-1">
+                    <Plus size={12} className="text-blue-400" />
+                    <span>+ Upload Produk Toko</span>
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) setFormImageUrl(URL.createObjectURL(file));
+                    }} />
+                  </label>
+                </div>
+
+                {/* Basic Info */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs text-slate-400 block mb-1">Nama Internal Landing Page *</label>
@@ -459,7 +604,7 @@ export default function LandingPagesDashboard() {
                   </div>
                 </div>
 
-                {/* 3. Product Info */}
+                {/* Product Info */}
                 <div>
                   <label className="text-xs text-slate-400 block mb-1">Nama Produk Shopee *</label>
                   <input type="text" value={formProductName} onChange={(e) => setFormProductName(e.target.value)} required className="input-field" placeholder="Serum Glowing Vitamin C 30ml" />
@@ -506,23 +651,56 @@ export default function LandingPagesDashboard() {
                   </>
                 )}
 
-                {/* Mode 2 Specific Delay Selector */}
+                {/* Mode 2 Specific Delay & Event Selector */}
                 {formType === 'BLINK' && (
-                  <div>
-                    <label className="text-xs text-slate-400 block mb-1 font-semibold">Redirect Delay (Detik) *</label>
-                    <div className="grid grid-cols-5 gap-2">
-                      {[0, 0.5, 1.0, 2.0, 3.0].map((d) => (
-                        <button
-                          key={d}
-                          type="button"
-                          onClick={() => setFormRedirectDelay(d)}
-                          className={`py-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
-                            formRedirectDelay === d ? 'bg-amber-500 text-black shadow' : 'bg-white/5 text-slate-400'
-                          }`}
+                  <div className="space-y-3 p-3.5 rounded-2xl bg-amber-500/5 border border-amber-500/20">
+                    <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <Zap size={14} /> Pengaturan Pixel Bridge Fast Redirect
+                    </h4>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs text-slate-400 block mb-1 font-semibold">Event Meta Pixel Ditembak</label>
+                        <select
+                          value={formPixelEvent}
+                          onChange={(e) => setFormPixelEvent(e.target.value)}
+                          className="input-field font-semibold text-xs"
                         >
-                          {d}s {d === 1.0 ? '(Default)' : ''}
-                        </button>
-                      ))}
+                          <option value="PageView + Lead">PageView + Lead (Direkomendasikan)</option>
+                          <option value="PageView + Purchase">PageView + Purchase</option>
+                          <option value="PageView + ViewContent">PageView + ViewContent</option>
+                          <option value="Custom ShopeeAffiliateRedirect">Custom ShopeeAffiliateRedirect</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs text-slate-400 block mb-1">Judul Tab Browser</label>
+                        <input
+                          type="text"
+                          value={formBrowserTitle}
+                          onChange={(e) => setFormBrowserTitle(e.target.value)}
+                          className="input-field text-xs"
+                          placeholder="Mengarahkan ke Shopee..."
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs text-slate-400 block mb-1 font-semibold">Waktu Delay Redirect (Detik) *</label>
+                      <div className="grid grid-cols-5 gap-2">
+                        {[0.1, 0.3, 0.5, 1.0, 2.0].map((d) => (
+                          <button
+                            key={d}
+                            type="button"
+                            onClick={() => setFormRedirectDelay(d)}
+                            className={`py-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
+                              formRedirectDelay === d ? 'bg-amber-500 text-black shadow' : 'bg-white/5 text-slate-400'
+                            }`}
+                          >
+                            {d}s {d === 0.3 ? '(Ideal)' : ''}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -580,18 +758,25 @@ export default function LandingPagesDashboard() {
                 {/* Frame Content Viewport */}
                 <div className="flex-1 bg-white rounded-[28px] overflow-y-auto text-[#222] text-xs font-sans relative flex flex-col">
                   {formType === 'BLINK' ? (
-                    // Blink Live Preview
+                    // Pixel Bridge Live Preview
                     <div className="flex-1 bg-[#090b10] text-slate-200 p-4 flex flex-col items-center justify-center text-center space-y-4">
-                      <div className="w-16 h-16 rounded-2xl overflow-hidden border border-white/10">
+                      <div className="w-16 h-16 rounded-2xl overflow-hidden border border-white/10 shadow-lg">
                         <img src={formImageUrl} alt="preview" className="w-full h-full object-cover" />
                       </div>
                       <div className="space-y-1">
                         <h4 className="font-bold text-xs text-white line-clamp-2">{formProductName}</h4>
-                        <p className="text-[10px] text-slate-400">Membuka halaman produk resmi...</p>
+                        <p className="text-[10px] text-slate-400">{formBrowserTitle}</p>
                       </div>
-                      <div className="w-8 h-8 rounded-full border-2 border-blue-500/20 border-t-blue-500 animate-spin" />
-                      <button className="w-full py-2 px-3 rounded-lg bg-blue-600 text-white font-semibold text-[10px]">
-                        {formCtaText}
+                      
+                      <div className="w-10 h-10 rounded-full border-2 border-[#ee4d2d]/20 border-t-[#ee4d2d] animate-spin my-1" />
+                      
+                      <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-mono flex items-center justify-center gap-1">
+                        <CheckCircle2 size={12} />
+                        <span>Simulasi Pixel: fbq(&apos;track&apos;, &apos;{formPixelEvent.split(' ')[0]}&apos;) Fired!</span>
+                      </div>
+
+                      <button className="w-full py-2.5 px-3 rounded-xl bg-[#ee4d2d] text-white font-extrabold text-[10px] uppercase shadow-lg shadow-[#ee4d2d]/20">
+                        {formCtaText || 'BUKA HALAMAN PRODUK'}
                       </button>
                     </div>
                   ) : (
@@ -679,7 +864,7 @@ export default function LandingPagesDashboard() {
             <div className="apple-card space-y-4">
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  🛍️ Custom Shopping Funnel Flow
+                  🛍️ Shopee Mobile Funnel Flow
                 </h3>
                 <span className="apple-badge apple-badge-purple text-[10px]">MODE 1</span>
               </div>
@@ -691,7 +876,7 @@ export default function LandingPagesDashboard() {
                 </div>
                 <div className="text-center text-slate-500">↓ (54.4% CTR)</div>
                 <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
-                  <span className="text-xs text-slate-400">2. CTA Button Clicks (CEK PROMO)</span>
+                  <span className="text-xs text-slate-400">2. CTA Button Clicks (Beli Dengan Voucher)</span>
                   <span className="font-mono font-bold text-purple-400 text-sm">680</span>
                 </div>
                 <div className="text-center text-slate-500">↓ (86.7% Outbound)</div>
@@ -702,11 +887,11 @@ export default function LandingPagesDashboard() {
               </div>
             </div>
 
-            {/* Blink Page Funnel */}
+            {/* Pixel Bridge Funnel */}
             <div className="apple-card space-y-4">
               <div className="flex items-center justify-between border-b border-white/5 pb-3">
                 <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  ⚡ Blink Bridge Funnel Flow
+                  ⚡ Pixel Bridge Funnel Flow
                 </h3>
                 <span className="apple-badge apple-badge-amber text-[10px]">MODE 2</span>
               </div>
@@ -716,9 +901,9 @@ export default function LandingPagesDashboard() {
                   <span className="text-xs text-slate-400">1. Visitors (Meta Ads Traffic)</span>
                   <span className="font-mono font-bold text-white text-sm">1,180</span>
                 </div>
-                <div className="text-center text-slate-500">↓ (93.2% Auto Redirect)</div>
+                <div className="text-center text-slate-500">↓ (93.2% Fast Redirect)</div>
                 <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
-                  <span className="text-xs text-slate-400">2. Redirect Started (Auto Bridge)</span>
+                  <span className="text-xs text-slate-400">2. Pixel Fired (PageView + Lead)</span>
                   <span className="font-mono font-bold text-amber-400 text-sm">1,100</span>
                 </div>
                 <div className="text-center text-slate-500">↓ (92.7% Outbound)</div>
@@ -740,7 +925,7 @@ export default function LandingPagesDashboard() {
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <Split size={16} className="text-purple-400" /> A/B Testing Variant Comparison
               </h3>
-              <p className="text-xs text-slate-400">Komparasi performa Variant A (Custom Shopping) vs Variant B (Blink Bridge) pada campaign yang sama.</p>
+              <p className="text-xs text-slate-400">Komparasi performa Variant A (Shopee Mobile UI) vs Variant B (Pixel Bridge) pada campaign yang sama.</p>
             </div>
             <span className="apple-badge apple-badge-purple text-[10px]">FUTURE READY</span>
           </div>
@@ -761,7 +946,7 @@ export default function LandingPagesDashboard() {
               </thead>
               <tbody>
                 <tr>
-                  <td><span className="apple-badge apple-badge-purple text-[9px]">Variant A (CUSTOM)</span></td>
+                  <td><span className="apple-badge apple-badge-purple text-[9px]">Variant A (SHOPEE UI)</span></td>
                   <td><span className="font-semibold text-xs text-white">Serum Glowing X</span></td>
                   <td><span className="font-mono text-xs">1,250</span></td>
                   <td><span className="font-mono text-xs text-amber-400 font-bold">47.2%</span></td>
@@ -771,7 +956,7 @@ export default function LandingPagesDashboard() {
                   <td><span className="font-mono text-xs text-emerald-400 font-bold">Rp 800.000</span></td>
                 </tr>
                 <tr>
-                  <td><span className="apple-badge apple-badge-amber text-[9px]">Variant B (BLINK)</span></td>
+                  <td><span className="apple-badge apple-badge-amber text-[9px]">Variant B (PIXEL BRIDGE)</span></td>
                   <td><span className="font-semibold text-xs text-white">Serum Glowing X - Blink</span></td>
                   <td><span className="font-mono text-xs">1,180</span></td>
                   <td><span className="font-mono text-xs text-emerald-400 font-bold">86.4%</span></td>
