@@ -96,14 +96,25 @@ export default function CSVImportPage() {
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-6">
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <Upload size={20} className="text-emerald-400" />
-          <h1 className="text-2xl font-bold">Import CSV Shopee Affiliate</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Upload size={20} className="text-emerald-400" />
+            <h1 className="text-2xl font-bold">Import CSV Shopee Affiliate</h1>
+          </div>
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            Upload file export CSV komisi dari dashboard Shopee Affiliate untuk langsung diproses &amp; dihitung ke analitik.
+          </p>
         </div>
-        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-          Upload file export CSV komisi dari dashboard Shopee Affiliate untuk langsung diproses & dihitung ke analitik.
-        </p>
+
+        <a
+          href="/shopee_sample_report.csv"
+          download="shopee_sample_report.csv"
+          className="apple-btn-secondary text-xs shrink-0 inline-flex items-center gap-2"
+        >
+          <FileSpreadsheet size={14} className="text-emerald-400" />
+          <span>Download Contoh File CSV Shopee</span>
+        </a>
       </div>
 
       {successCount !== null && (

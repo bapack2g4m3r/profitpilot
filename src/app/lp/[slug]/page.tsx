@@ -2,8 +2,9 @@
 
 import { useState, useEffect, use } from 'react';
 import {
-  ShoppingBag, Search, Star, ShieldCheck, Truck, Clock, ArrowRight,
-  ExternalLink, Sparkles, RefreshCw, CheckCircle2, ChevronRight, Share2, ThumbsUp
+  Search, Star, ShieldCheck, Truck, Clock, ExternalLink, Sparkles, RefreshCw,
+  CheckCircle2, ChevronRight, Share2, ThumbsUp, MessageSquare, ShoppingCart,
+  Play, Heart, MoreHorizontal, ArrowLeft, Trophy, Award, Check, MapPin, Store
 } from 'lucide-react';
 import { formatIDR } from '@/lib/utils';
 
@@ -18,6 +19,7 @@ export default function PublicLandingPage({ params }: PageProps) {
   const [error, setError] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number>(1);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [activeMediaIdx, setActiveMediaIdx] = useState(0);
 
   useEffect(() => {
     async function fetchPage() {
@@ -107,21 +109,21 @@ export default function PublicLandingPage({ params }: PageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0f1117] text-white flex flex-col items-center justify-center p-4">
-        <RefreshCw size={32} className="animate-spin text-blue-500 mb-3" />
-        <p className="text-sm text-slate-400">Memuat halaman produk...</p>
+      <div className="min-h-screen bg-[#f5f5f5] text-slate-800 flex flex-col items-center justify-center p-4">
+        <RefreshCw size={32} className="animate-spin text-[#ee4d2d] mb-3" />
+        <p className="text-xs text-slate-500 font-sans">Memuat halaman produk Shopee...</p>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-[#0f1117] text-white flex flex-col items-center justify-center p-4 text-center">
+      <div className="min-h-screen bg-[#f5f5f5] text-slate-800 flex flex-col items-center justify-center p-4 text-center">
         <div className="w-16 h-16 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mb-3">
           !
         </div>
-        <h2 className="text-lg font-bold">Halaman Tidak Ditemukan</h2>
-        <p className="text-xs text-slate-400 mt-1 max-w-sm">{error || 'Halaman landing ini mungkin telah dihapus atau tidak aktif.'}</p>
+        <h2 className="text-base font-bold">Halaman Tidak Ditemukan</h2>
+        <p className="text-xs text-slate-500 mt-1 max-w-sm">{error || 'Halaman landing ini mungkin telah dihapus atau tidak aktif.'}</p>
       </div>
     );
   }
@@ -134,7 +136,7 @@ export default function PublicLandingPage({ params }: PageProps) {
       <div className="min-h-screen bg-[#090b10] text-slate-100 flex flex-col items-center justify-center p-4 sm:p-6 font-sans">
         <div className="max-w-md w-full bg-[#131722]/90 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-2xl text-center space-y-6 animate-fade-in">
           {/* Brand Header */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ee4d2d]/10 border border-[#ee4d2d]/20 text-[#ee4d2d] text-xs font-semibold">
             <Sparkles size={12} /> ProfitPilot Bridge Mode
           </div>
 
@@ -149,27 +151,27 @@ export default function PublicLandingPage({ params }: PageProps) {
           <div className="space-y-2">
             <h1 className="text-base font-bold text-white line-clamp-2">{data.product_name}</h1>
             <p className="text-xs text-slate-400">
-              {isRedirecting ? 'Mengalihkan ke halaman produk...' : 'Membuka halaman produk resmi...'}
+              {isRedirecting ? 'Mengalihkan ke halaman produk resmi Shopee...' : 'Membuka halaman produk resmi...'}
             </p>
           </div>
 
           {/* Loading Indicator & Countdown */}
           <div className="flex flex-col items-center justify-center space-y-3 py-2">
             <div className="relative flex items-center justify-center">
-              <div className="w-12 h-12 rounded-full border-2 border-blue-500/20 border-t-blue-500 animate-spin" />
-              <span className="absolute text-xs font-mono font-bold text-blue-400">
+              <div className="w-12 h-12 rounded-full border-2 border-[#ee4d2d]/20 border-t-[#ee4d2d] animate-spin" />
+              <span className="absolute text-xs font-mono font-bold text-[#ee4d2d]">
                 {countdown.toFixed(1)}s
               </span>
             </div>
             <p className="text-[11px] text-slate-500">
-              Anda akan diarahkan secara otomatis ke toko resmi.
+              Anda akan diarahkan secara otomatis ke toko resmi Shopee.
             </p>
           </div>
 
           {/* Manual Link Button */}
           <button
             onClick={handleCustomCTAClick}
-            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 rounded-xl bg-[#ee4d2d] hover:bg-[#d73211] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#ee4d2d]/30 flex items-center justify-center gap-2"
           >
             <span>Buka Langsung Halaman Produk</span>
             <ExternalLink size={14} />
@@ -177,7 +179,7 @@ export default function PublicLandingPage({ params }: PageProps) {
 
           <div className="pt-2 border-t border-white/5 text-[10px] text-slate-500 flex items-center justify-center gap-1">
             <ShieldCheck size={12} className="text-emerald-400" />
-            Koneksi Aman &amp; Terverifikasi
+            Koneksi Resmi Shopee Terverifikasi
           </div>
         </div>
       </div>
@@ -185,151 +187,343 @@ export default function PublicLandingPage({ params }: PageProps) {
   }
 
   // ==========================================
-  // MODE 1: CUSTOM SHOPPING PAGE (Mobile Marketplace UX)
+  // MODE 1: 100% SHOPEE MOBILE PRODUCT PAGE UX
   // ==========================================
   const highlightsList = (data.highlights || '')
     .split(/[,;\n]/)
     .map((s: string) => s.trim())
     .filter(Boolean);
 
+  const galleryImages = [
+    data.image_url,
+    'https://images.unsplash.com/photo-1608248597261-83325e6ba688?w=600&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&auto=format&fit=crop&q=80'
+  ].filter(Boolean);
+
+  const promoPrice = data.promo_price || data.original_price || 89000;
+  const originalPrice = data.original_price || 150000;
+  const discountPercent = data.discount_percent || (originalPrice > promoPrice ? Math.round(((originalPrice - promoPrice) / originalPrice) * 100) : 41);
+
   return (
-    <div className="min-h-screen bg-[#f4f5f8] text-[#222222] font-sans pb-24 max-w-md mx-auto relative shadow-2xl">
-      {/* 1. Marketplace Mobile Header */}
-      <header className="sticky top-0 z-40 bg-white border-b border-gray-200 px-3 py-2.5 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-2 flex-1 mr-3 bg-gray-100 px-3 py-1.5 rounded-full text-xs text-gray-500">
-          <Search size={14} className="text-gray-400 shrink-0" />
-          <span className="truncate">{data.product_name}</span>
+    <div className="min-h-screen bg-[#f5f5f5] text-[#222222] font-sans pb-20 max-w-md mx-auto relative shadow-2xl selection:bg-[#ee4d2d] selection:text-white">
+      
+      {/* 1. Exact Shopee Mobile Top Navigation Bar */}
+      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 px-3 py-2 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-2 flex-1 mr-2">
+          <ArrowLeft size={18} className="text-slate-600 cursor-pointer shrink-0" />
+          <div className="flex items-center gap-1 truncate bg-[#f5f5f5] px-2.5 py-1 rounded-full text-xs">
+            <span className="bg-[#ee4d2d] text-white text-[9px] font-black px-1 rounded">MALL</span>
+            <span className="font-bold text-slate-800 text-[11px] truncate">{data.shop_name || 'SKINTIFIC | OFFICIAL'}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-3 text-gray-700">
+
+        <div className="flex items-center gap-3 text-slate-600 shrink-0">
+          <Search size={18} className="cursor-pointer" />
+          <div className="relative">
+            <ShoppingCart size={18} className="cursor-pointer" />
+            <span className="absolute -top-1.5 -right-1.5 bg-[#ee4d2d] text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+              99+
+            </span>
+          </div>
           <Share2 size={18} className="cursor-pointer" />
-          <ShoppingBag size={18} className="cursor-pointer" />
+          <MoreHorizontal size={18} className="cursor-pointer" />
         </div>
       </header>
 
-      {/* 2. Product Image Gallery */}
-      <div className="relative aspect-square bg-gray-100 overflow-hidden">
-        {data.image_url ? (
-          <img src={data.image_url} alt={data.product_name} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-            Foto Produk Promo
-          </div>
-        )}
-        {data.discount_percent > 0 && (
-          <div className="absolute top-3 left-3 bg-red-600 text-white font-black text-xs px-2 py-1 rounded-md shadow">
-            -{data.discount_percent}% OFF
-          </div>
-        )}
-      </div>
+      {/* 2. Interactive Product Image & Video Gallery */}
+      <div className="relative aspect-square bg-white overflow-hidden group">
+        <img
+          src={galleryImages[activeMediaIdx] || galleryImages[0]}
+          alt={data.product_name}
+          className="w-full h-full object-cover transition-all duration-300"
+        />
 
-      {/* 3. Price & Ratings Section */}
-      <div className="bg-white p-4 space-y-2 border-b border-gray-100">
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-black text-red-600 font-sans">
-            {formatIDR(data.promo_price || data.original_price)}
-          </span>
-          {data.original_price > data.promo_price && (
-            <span className="text-xs text-gray-400 line-through">
-              {formatIDR(data.original_price)}
-            </span>
-          )}
+        {/* Video Play Icon Overlay */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white border border-white/20 shadow-lg">
+            <Play size={20} className="fill-white ml-0.5" />
+          </div>
         </div>
 
-        <h1 className="text-sm font-bold text-gray-900 leading-snug line-clamp-2">
+        {/* Media Slider Index Counter (e.g. 1/14) */}
+        <div className="absolute bottom-3 right-3 bg-black/60 text-white text-[10px] font-mono px-2 py-0.5 rounded-full backdrop-blur-sm">
+          {activeMediaIdx + 1}/{galleryImages.length}
+        </div>
+      </div>
+
+      {/* Gallery Thumbnail Selector */}
+      <div className="bg-white px-3 py-2 border-b border-slate-100 flex items-center gap-2 overflow-x-auto">
+        {galleryImages.map((img, idx) => (
+          <button
+            key={idx}
+            onClick={() => setActiveMediaIdx(idx)}
+            className={`w-12 h-12 rounded-lg border-2 overflow-hidden shrink-0 transition-all ${
+              activeMediaIdx === idx ? 'border-[#ee4d2d] scale-105 shadow-sm' : 'border-transparent opacity-70'
+            }`}
+          >
+            <img src={img} alt="thumb" className="w-full h-full object-cover" />
+          </button>
+        ))}
+      </div>
+
+      {/* 3. Red Price & Voucher Banner */}
+      <div className="bg-white p-3 space-y-2 border-b border-slate-100">
+        <div className="flex items-baseline justify-between">
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-black text-[#ee4d2d] font-sans">
+              {formatIDR(promoPrice)}
+            </span>
+            {originalPrice > promoPrice && (
+              <span className="text-xs text-slate-400 line-through">
+                {formatIDR(originalPrice)}
+              </span>
+            )}
+          </div>
+          <Heart size={20} className="text-slate-400 cursor-pointer hover:text-rose-500" />
+        </div>
+
+        {/* Voucher Tag Badges */}
+        <div className="flex items-center gap-1.5 flex-wrap text-[10px]">
+          <span className="bg-[#fff0ed] text-[#ee4d2d] border border-[#ee4d2d]/30 font-semibold px-1.5 py-0.5 rounded">
+            Dgn Tempat Voucher
+          </span>
+          <span className="bg-[#fff0ed] text-[#ee4d2d] border border-[#ee4d2d]/30 font-semibold px-1.5 py-0.5 rounded">
+            Diskon Rp9.000
+          </span>
+          <span className="bg-[#fff0ed] text-[#ee4d2d] border border-[#ee4d2d]/30 font-semibold px-1.5 py-0.5 rounded">
+            Hemat {discountPercent}%
+          </span>
+        </div>
+
+        {/* Mall Tag & Title */}
+        <h1 className="text-sm font-semibold text-slate-900 leading-snug line-clamp-2 pt-1">
+          <span className="bg-[#ee4d2d] text-white text-[10px] font-black px-1.5 py-0.5 rounded mr-1 inline-block align-middle">
+            Shopee Mall
+          </span>
           {data.product_name}
         </h1>
 
-        <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
+        {/* Rating & Sold Count Bar */}
+        <div className="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-50">
           <div className="flex items-center gap-1">
-            <span className="text-amber-500 font-bold flex items-center gap-0.5">
-              <Star size={13} className="fill-amber-500 text-amber-500" /> {data.rating || 4.9}
+            <span className="text-[#ee4d2d] font-bold flex items-center gap-0.5">
+              <Star size={12} className="fill-[#ee4d2d] text-[#ee4d2d]" /> {data.rating || 4.9}
             </span>
-            <span className="text-gray-300">•</span>
-            <span>{data.sold_count || '2.5rb+'} Terjual</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-600 font-medium">{data.sold_count || '10rb+'} Terjual</span>
           </div>
-          <span className="text-emerald-600 font-medium">{data.shop_name}</span>
+          <span className="text-[11px] text-slate-400">Garansi Shopee</span>
         </div>
       </div>
 
-      {/* 4. Marketplace Guarantee & Shipping Information */}
-      <div className="bg-white px-4 py-3 border-b border-gray-100 flex items-center justify-between text-xs text-gray-600">
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1 text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">
-            <Truck size={12} /> Gratis Ongkir Extra
+      {/* 4. Shipping & Trust Guarantee Section */}
+      <div className="bg-white mt-2 p-3 space-y-2 text-[11px] border-y border-slate-100">
+        <div className="flex items-center gap-2 text-slate-700">
+          <Truck size={14} className="text-emerald-600 shrink-0" />
+          <span className="font-bold text-slate-800">4 Jam</span>
+          <span className="text-slate-500">Pengiriman Cepat 4Jam • Tiba Esok Hari</span>
+        </div>
+        <div className="flex items-center gap-3 text-[10px] text-slate-600 pt-1 border-t border-slate-50">
+          <span className="flex items-center gap-1">
+            <CheckCircle2 size={12} className="text-[#ee4d2d]" /> 15 Hari Pengembalian
           </span>
-          <span className="flex items-center gap-1 text-blue-700 font-semibold bg-blue-50 px-2 py-0.5 rounded">
-            <ShieldCheck size={12} /> COD Bisa Bayar di Tempat
+          <span className="flex items-center gap-1">
+            <CheckCircle2 size={12} className="text-[#ee4d2d]" /> 100% Original
           </span>
+          <span className="flex items-center gap-1">
+            <CheckCircle2 size={12} className="text-[#ee4d2d]" /> COD-Bisa Cek
+          </span>
+        </div>
+        {/* Category Rank Banner */}
+        <div className="bg-[#fff8f6] p-2 rounded-lg border border-[#ffeeeb] flex items-center justify-between text-[#ee4d2d] font-semibold text-[11px]">
+          <div className="flex items-center gap-1.5">
+            <Trophy size={14} className="text-amber-500" />
+            <span>No. 7 Terlaris di Masker Wajah</span>
+          </div>
+          <ChevronRight size={14} />
         </div>
       </div>
 
-      {/* 5. Product Highlights */}
-      {highlightsList.length > 0 && (
-        <div className="bg-white p-4 border-b border-gray-100 space-y-2">
-          <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wide">Keunggulan Produk</h3>
-          <div className="grid grid-cols-2 gap-2">
+      {/* 5. Product Rating & AI Rangkuman Penilaian */}
+      <div className="bg-white mt-2 p-3 space-y-3 border-y border-slate-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1 text-xs">
+            <span className="font-bold text-slate-900">4.9</span>
+            <div className="flex text-[#ee4d2d]">★★★★★</div>
+            <span className="text-slate-600 font-medium">Penilaian Produk (114,6RB)</span>
+          </div>
+          <ChevronRight size={14} className="text-slate-400" />
+        </div>
+
+        {/* Rangkuman Penilaian Bullet Points */}
+        <div className="bg-[#fcfbf7] p-2.5 rounded-xl border border-amber-200/60 text-[11px] space-y-1.5">
+          <div className="flex items-center gap-1 font-bold text-amber-900 text-[11px]">
+            <Sparkles size={12} className="text-amber-600" /> Rangkuman Penilaian AI
+          </div>
+          <ul className="space-y-1 text-slate-700 list-disc pl-4 text-[10.5px]">
+            <li><strong>Rekomendasi:</strong> Tipe kulit kering dan lebih terawat setelah pemakaian rutin...</li>
+            <li><strong>Formulasi:</strong> Tekstur dan baunya harum serta tidak perih di kulit wajah...</li>
+          </ul>
+        </div>
+
+        {/* User Review Media Grid */}
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          <div className="w-20 h-20 rounded-lg bg-slate-100 overflow-hidden relative shrink-0">
+            <img src={galleryImages[0]} alt="rev" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+              <Play size={16} className="fill-white text-white" />
+            </div>
+          </div>
+          <div className="w-20 h-20 rounded-lg bg-slate-100 overflow-hidden relative shrink-0">
+            <img src={galleryImages[1]} alt="rev" className="w-full h-full object-cover" />
+          </div>
+          <div className="w-20 h-20 rounded-lg bg-slate-100 overflow-hidden relative shrink-0">
+            <img src={galleryImages[2]} alt="rev" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/50 text-white font-bold text-xs flex items-center justify-center">
+              +1,4RB
+            </div>
+          </div>
+        </div>
+
+        {/* Single Detailed Buyer Review Card */}
+        <div className="pt-2 border-t border-slate-100 text-[11px] space-y-1">
+          <div className="flex items-center justify-between text-slate-500">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center font-bold text-[10px] text-slate-600">
+                P
+              </div>
+              <span className="font-semibold text-slate-800">p******p</span>
+            </div>
+            <div className="flex text-[#ee4d2d]">★★★★★</div>
+          </div>
+          <p className="text-slate-400 text-[10px]">Variasi: Clay Stick 40g • 2026-09-02</p>
+          <p className="text-slate-700 text-[11px] leading-snug">
+            &quot;Suka banget sm clay stick ini, praktis bgt tinggal diusap ke muka tanpa perlu kotorin tangan. Muka langsung berasa bersih &amp; haluss!&quot;
+          </p>
+        </div>
+      </div>
+
+      {/* 6. Video Terkait Produk Carousel */}
+      <div className="bg-white mt-2 p-3 space-y-2 border-y border-slate-100">
+        <h3 className="text-xs font-bold text-slate-900 uppercase">Video Terkait Produk</h3>
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          <div className="w-28 aspect-[3/4] rounded-lg bg-slate-900 relative overflow-hidden shrink-0 shadow-sm">
+            <img src={galleryImages[0]} alt="video" className="w-full h-full object-cover opacity-80" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 p-2 flex flex-col justify-between">
+              <div className="flex justify-end"><Play size={12} className="text-white fill-white" /></div>
+              <p className="text-white text-[9px] font-medium line-clamp-2">Aroma rose nya enak banget...</p>
+            </div>
+          </div>
+          <div className="w-28 aspect-[3/4] rounded-lg bg-slate-900 relative overflow-hidden shrink-0 shadow-sm">
+            <img src={galleryImages[1]} alt="video" className="w-full h-full object-cover opacity-80" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 p-2 flex flex-col justify-between">
+              <div className="flex justify-end"><Play size={12} className="text-white fill-white" /></div>
+              <p className="text-white text-[9px] font-medium line-clamp-2">Clay stick SKINTIFIC ter-best seller...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 7. Store Profile Card (Shopee Mall Official Store) */}
+      <div className="bg-white mt-2 p-3 space-y-3 border-y border-slate-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-full bg-[#0088cc] text-white font-black text-xs flex items-center justify-center border border-slate-200">
+              OFFICIAL
+            </div>
+            <div>
+              <div className="flex items-center gap-1">
+                <span className="font-bold text-slate-900 text-xs">{data.shop_name || 'SKINTIFIC Official Store'}</span>
+                <span className="bg-[#ee4d2d] text-white text-[8px] font-black px-1 rounded">MALL</span>
+              </div>
+              <p className="text-[10px] text-slate-400">Aktif 1 menit lalu • Kota Jakarta Selatan</p>
+            </div>
+          </div>
+          <button className="px-3 py-1 rounded border border-[#ee4d2d] text-[#ee4d2d] text-xs font-bold hover:bg-[#fff0ed]">
+            Kunjungi Toko
+          </button>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 border-t border-slate-100 pt-2 text-center text-[10px]">
+          <div>
+            <span className="font-bold text-slate-800 block text-xs">141</span>
+            <span className="text-slate-400">Produk</span>
+          </div>
+          <div>
+            <span className="font-bold text-[#ee4d2d] block text-xs">4.9</span>
+            <span className="text-slate-400">Penilaian Toko</span>
+          </div>
+          <div>
+            <span className="font-bold text-emerald-600 block text-xs">98%</span>
+            <span className="text-slate-400">Chat Dibalas</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 8. Produk Serupa / Rekomendasi Toko Carousel */}
+      <div className="bg-white mt-2 p-3 space-y-2 border-y border-slate-100">
+        <h3 className="text-xs font-bold text-slate-900 uppercase">Produk Lain Dari Toko Ini</h3>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-slate-50 rounded-lg p-2 border border-slate-100 space-y-1">
+            <img src={galleryImages[1]} alt="rec" className="w-full aspect-square object-cover rounded" />
+            <p className="text-[10px] font-medium text-slate-800 line-clamp-2">SKINTIFIC Cover All Perfect Cushion</p>
+            <p className="text-xs font-black text-[#ee4d2d]">Rp119.401</p>
+            <p className="text-[9px] text-slate-400">10rb+ Terjual</p>
+          </div>
+          <div className="bg-slate-50 rounded-lg p-2 border border-slate-100 space-y-1">
+            <img src={galleryImages[2]} alt="rec" className="w-full aspect-square object-cover rounded" />
+            <p className="text-[10px] font-medium text-slate-800 line-clamp-2">SKINTIFIC 5X Ceramide Barrier Moisture</p>
+            <p className="text-xs font-black text-[#ee4d2d]">Rp129.401</p>
+            <p className="text-[9px] text-slate-400">10rb+ Terjual</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 9. Product Highlights & Description */}
+      <div className="bg-white mt-2 p-3 space-y-2 border-y border-slate-100">
+        <h3 className="text-xs font-bold text-slate-900 uppercase">Rincian &amp; Deskripsi Produk</h3>
+        
+        {highlightsList.length > 0 && (
+          <div className="space-y-1 text-[11px] text-slate-700 border-b border-slate-100 pb-2">
             {highlightsList.map((item: string, idx: number) => (
-              <div key={idx} className="flex items-center gap-1.5 text-xs text-gray-700 bg-gray-50 p-2 rounded-lg border border-gray-100">
-                <CheckCircle2 size={13} className="text-emerald-500 shrink-0" />
-                <span className="truncate">{item}</span>
+              <div key={idx} className="flex items-center gap-1.5">
+                <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
+                <span>{item}</span>
               </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* 6. Product Description */}
-      <div className="bg-white p-4 border-b border-gray-100 space-y-2">
-        <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wide">Deskripsi Produk</h3>
-        <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-line">
-          {data.description || 'Produk pilihan terbaik kualitas terjamin.'}
+        <p className="text-[11px] text-slate-600 leading-relaxed whitespace-pre-line">
+          {data.description || 'Produk unggulan terlaris kualitas terjamin BPOM.'}
         </p>
       </div>
 
-      {/* 7. Social Proof & Reviews Section */}
-      <div className="bg-white p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wide">Ulasan Pembeli (4.9/5)</h3>
-          <span className="text-xs text-emerald-600 font-semibold">100% Pembeli Puas</span>
-        </div>
+      {/* 10. Sticky Bottom Mobile Action Bar (Exact Shopee UI) */}
+      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-slate-200 flex items-stretch z-50 shadow-2xl h-14">
+        {/* Chat Seller */}
+        <button className="flex-1 flex flex-col items-center justify-center text-[10px] text-slate-600 bg-[#5ca89e]/10 border-r border-slate-100">
+          <MessageSquare size={16} className="text-[#5ca89e]" />
+          <span>Chat</span>
+        </button>
 
-        <div className="space-y-3">
-          <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-xs space-y-1">
-            <div className="flex items-center justify-between text-gray-500">
-              <span className="font-bold text-gray-800">Rina S. (Bandung)</span>
-              <div className="flex text-amber-500">★★★★★</div>
-            </div>
-            <p className="text-gray-600">
-              &quot;Barang cepet banget nyampenya, kemasan aman bubble wrap tebel. Pas dicoba beneran memuaskan sesuai deskripsi!&quot;
-            </p>
-          </div>
+        {/* Add to Cart */}
+        <button className="flex-1 flex flex-col items-center justify-center text-[10px] text-slate-600 bg-[#5ca89e]/10 border-r border-slate-100">
+          <ShoppingCart size={16} className="text-[#5ca89e]" />
+          <span>Keranjang</span>
+        </button>
 
-          <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-xs space-y-1">
-            <div className="flex items-center justify-between text-gray-500">
-              <span className="font-bold text-gray-800">Dedi K. (Jakarta)</span>
-              <div className="flex text-amber-500">★★★★★</div>
-            </div>
-            <p className="text-gray-600">
-              &quot;Dapet harga promo potongan gede, pengiriman aman COD. Recomended banget seller ini!&quot;
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 8. Sticky Bottom Floating CTA Bar */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-gray-200 p-3 flex items-center gap-3 z-50 shadow-2xl">
-        <div className="flex flex-col text-xs shrink-0">
-          <span className="text-[10px] text-gray-400 uppercase">Harga Promo</span>
-          <span className="font-bold text-red-600 text-sm">{formatIDR(data.promo_price || data.original_price)}</span>
-        </div>
+        {/* Large Solid Red Action Button */}
         <button
           onClick={handleCustomCTAClick}
-          className="flex-1 py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white font-extrabold text-xs uppercase tracking-wider transition-all shadow-lg shadow-red-600/30 flex items-center justify-center gap-1.5"
+          className="flex-[2.5] bg-[#ee4d2d] hover:bg-[#d73211] active:scale-[0.99] text-white font-extrabold text-xs uppercase tracking-wide flex flex-col items-center justify-center px-2 transition-all shadow-md"
         >
-          <span>{data.cta_text || 'CEK PROMO'}</span>
-          <ChevronRight size={16} />
+          <span>{data.cta_text || 'Beli Dengan Voucher'}</span>
+          <span className="text-[11px] font-black font-sans">{formatIDR(promoPrice)}</span>
         </button>
       </div>
+
     </div>
   );
 }

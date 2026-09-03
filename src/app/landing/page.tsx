@@ -595,41 +595,71 @@ export default function LandingPagesDashboard() {
                       </button>
                     </div>
                   ) : (
-                    // Custom Shopping Live Preview
-                    <div className="flex-1 bg-[#f4f5f8] pb-14">
-                      {/* Marketplace Header */}
+                    // 100% Shopee Mobile Live Preview Frame
+                    <div className="flex-1 bg-[#f5f5f5] pb-14 text-[10px]">
+                      {/* Top Nav */}
                       <div className="bg-white p-2 border-b flex items-center justify-between">
-                        <div className="bg-gray-100 px-2 py-1 rounded-full text-[10px] text-gray-500 truncate flex-1 mr-2">
-                          🔍 {formProductName}
+                        <div className="flex items-center gap-1 bg-[#f5f5f5] px-2 py-0.5 rounded-full truncate flex-1 mr-2 text-[9px]">
+                          <span className="bg-[#ee4d2d] text-white font-black px-1 rounded text-[8px]">MALL</span>
+                          <span className="font-bold text-slate-800 truncate">{formShopName || 'Toko Resmi'}</span>
                         </div>
-                        <ShoppingBag size={14} className="text-gray-600" />
+                        <ShoppingBag size={12} className="text-slate-600" />
                       </div>
-                      {/* Image */}
-                      <div className="aspect-square bg-gray-100 relative">
+                      {/* Media */}
+                      <div className="aspect-square bg-white relative">
                         <img src={formImageUrl} alt="preview" className="w-full h-full object-cover" />
-                        <div className="absolute top-2 left-2 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
-                          PROMO
+                        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[8px] px-1.5 py-0.5 rounded-full font-mono">
+                          1/4
                         </div>
                       </div>
-                      {/* Price */}
-                      <div className="bg-white p-3 space-y-1">
-                        <p className="text-base font-black text-red-600">{formatIDR(parseFloat(formPromoPrice) || 0)}</p>
-                        <p className="text-[10px] font-bold text-gray-800 line-clamp-2">{formProductName}</p>
-                        <p className="text-[9px] text-gray-400">★ {formRating} • {formSoldCount} Terjual</p>
+                      {/* Price Banner */}
+                      <div className="bg-white p-2.5 space-y-1">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-base font-black text-[#ee4d2d] font-sans">{formatIDR(parseFloat(formPromoPrice) || 0)}</span>
+                          <span className="text-[9px] text-slate-400 line-through">{formatIDR(parseFloat(formOriginalPrice) || 0)}</span>
+                        </div>
+                        <div className="flex gap-1 text-[8px]">
+                          <span className="bg-[#fff0ed] text-[#ee4d2d] border border-[#ee4d2d]/30 font-semibold px-1 rounded">Diskon Promo</span>
+                          <span className="bg-[#fff0ed] text-[#ee4d2d] border border-[#ee4d2d]/30 font-semibold px-1 rounded">Voucher Extra</span>
+                        </div>
+                        <p className="text-[10px] font-semibold text-slate-900 leading-tight line-clamp-2">
+                          <span className="bg-[#ee4d2d] text-white text-[8px] font-black px-1 rounded mr-1">MALL</span>
+                          {formProductName}
+                        </p>
+                        <p className="text-[8px] text-slate-500 pt-0.5">★ {formRating} • {formSoldCount} Terjual</p>
                       </div>
-                      {/* Highlights */}
-                      <div className="bg-white p-3 mt-1 border-t space-y-1">
-                        <p className="text-[9px] font-bold uppercase text-gray-500">Highlights</p>
-                        <p className="text-[9px] text-gray-600">{formHighlights}</p>
+                      {/* Shipping Bar */}
+                      <div className="bg-white mt-1 p-2 border-y border-slate-100 text-[8px] space-y-1 text-slate-600">
+                        <div className="flex items-center gap-1">
+                          <span className="font-bold text-slate-800">4 Jam</span>
+                          <span>Pengiriman Cepat • Tiba Esok Hari</span>
+                        </div>
+                        <div className="flex gap-2 text-[7.5px] pt-0.5 text-slate-500">
+                          <span>✓ 15 Hari Pengembalian</span>
+                          <span>✓ 100% Original</span>
+                          <span>✓ COD</span>
+                        </div>
+                      </div>
+                      {/* Rating Summary */}
+                      <div className="bg-white mt-1 p-2 border-y border-slate-100 space-y-1">
+                        <div className="flex items-center justify-between text-[9px] font-bold">
+                          <span>Penilaian Produk (4.9/5)</span>
+                          <span className="text-[#ee4d2d]">100% Puas</span>
+                        </div>
+                        <div className="bg-[#fcfbf7] p-1.5 rounded border border-amber-200 text-[8px] text-slate-700">
+                          ★ Tipe kulit terawat &amp; tekstur lembut tidak perih...
+                        </div>
                       </div>
                       {/* Sticky Bar */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-white border-t p-2 flex items-center gap-2">
-                        <div className="text-[9px]">
-                          <span className="text-gray-400 block">Promo</span>
-                          <span className="font-bold text-red-600">{formatIDR(parseFloat(formPromoPrice) || 0)}</span>
+                      <div className="absolute bottom-0 left-0 right-0 bg-white border-t p-1.5 flex items-center gap-1.5 h-12 z-20">
+                        <div className="text-[8px] text-slate-500 px-1 border-r text-center">
+                          💬 Chat
                         </div>
-                        <button className="flex-1 bg-red-600 text-white font-extrabold text-[10px] py-2 rounded-lg uppercase">
-                          {formCtaText}
+                        <div className="text-[8px] text-slate-500 px-1 border-r text-center">
+                          🛒 Keranjang
+                        </div>
+                        <button className="flex-1 bg-[#ee4d2d] text-white font-extrabold text-[9px] py-2 rounded uppercase text-center">
+                          {formCtaText || 'BELI DENGAN VOUCHER'}
                         </button>
                       </div>
                     </div>

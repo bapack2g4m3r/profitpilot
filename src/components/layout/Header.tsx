@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { RefreshCw, Sparkles, Layers, Percent } from 'lucide-react';
+import { RefreshCw, Sparkles, Layers, Percent, Database } from 'lucide-react';
 
 interface HeaderProps {
   onRefresh?: () => void;
@@ -23,9 +23,8 @@ export default function Header({
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1 flex-wrap">
-            <span className="apple-badge apple-badge-blue text-[10px]">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-              v1.5 Pro Suite
+            <span className="apple-badge apple-badge-green text-[10px]">
+              <Database size={10} /> Supabase Cloud Connected
             </span>
             <span className="apple-badge apple-badge-purple text-[10px]">
               <Sparkles size={10} /> Multi-Account &amp; Tax Ready
